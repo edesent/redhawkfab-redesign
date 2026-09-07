@@ -23,7 +23,7 @@ export function Hero() {
       <div className="arc absolute -left-40 top-1/3 h-[60vh] w-[60vw] rounded-full bg-red/10 blur-3xl" aria-hidden="true" />
 
       <div className="wrap relative pt-40 pb-16 md:pb-24 lg:pb-28">
-        <p className="eyebrow rise rise-1">Welding &amp; Fabrication — Port Huron, MI</p>
+        <p className="eyebrow rise rise-1">Welding &amp; Fabrication<span className="hidden sm:inline"> — Port Huron, MI</span></p>
         <h1 className="display display-xl rise rise-2 mt-6 max-w-[17ch] [text-shadow:0_2px_24px_rgba(0,0,0,0.6)]">
           <span className="chrome">Built to print.</span>
           <br />
