@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   RedHawk Fab — tokens.
+   Every value below is measured off redhawkfab.com (their GoDaddy site):
+   the tan #DEC6A7 and the near-black #161616 bands, Lato for the small
+   uppercase section titles, Lusitana for everything else.
+   ========================================================================== */
+@theme inline {
+  --font-body: var(--font-lusitana);
+  --font-heading: var(--font-lato);
+
+  --color-tan: #dec6a7;
+  --color-coal: #161616;
+  --color-body: #353230;
+  --color-note: #302e2c;
+  --color-hero: #696969;
+  --color-footer-text: #595959;
+  --color-rule: #e2e2e2;
+  --color-thumb: #e84141;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body), Georgia, serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000;
+  background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:where(a, button, [tabindex], input, textarea):focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  /* Their content column: 1112px inside 24px gutters, i.e. a 1160 box.
+     Below 768 the box is the full viewport; above it, viewport − 40. */
+  .wrap {
+    width: 100%;
+    max-width: 1160px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+  @media (min-width: 768px) {
+    .wrap { width: calc(100% - 40px); }
+  }
+
+  /* ---- Type ------------------------------------------------------------ */
+  .section-title {
+    font-family: var(--font-heading), Arial, sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 30.8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #000;
+  }
+  .section-rule {
+    border: 0;
+    border-bottom: 1px solid #000;
+    margin: 16px 0 0;
+  }
+  .h4 {
+    font-size: 22px;
+    line-height: 27.5px;
+    font-weight: 400;
+    color: #000;
+  }
+  .copy {
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--color-body);
+  }
+  .note {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-note);
+  }
+  .hero-title {
+    font-family: var(--font-heading), Arial, sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    text-align: center;
+    font-size: 40px;
+    line-height: 48px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #fff;
+  }
+  @media (min-width: 768px) {
+    .hero-title { font-size: 48px; line-height: 57.6px; padding-bottom: 8px; }
+  }
+  @media (min-width: 1280px) {
+    .hero-title { font-size: 62px; line-height: 74.4px; }
+  }
+  .industries-title {
+    color: var(--color-tan);
+    text-align: center;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 35px;
+  }
+  @media (min-width: 768px) {
+    .industries-title { font-size: 30px; line-height: 37.5px; }
+  }
+  @media (min-width: 1280px) {
+    .industries-title { font-size: 32px; line-height: 40px; }
+  }
+
+  /* ---- Buttons --------------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: 8px 32px;
+    font-family: var(--font-body), Georgia, serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1.008px;
+    line-height: normal;
+    text-decoration: none;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .btn-light { background: #fff; color: #000; }
+  .btn-light:hover { background: #ebebeb; }
+  .btn-dark { background: #000; color: #fff; }
+  .btn-dark:hover { background: #2b2b2b; }
+  .btn:disabled { opacity: 0.55; cursor: progress; }
+
+  .text-link {
+    color: var(--color-coal);
+    text-decoration: none;
+  }
+  .text-link:hover { text-decoration: underline; }
+
+  /* ---- Fields (GoDaddy's floating-label boxes) ------------------------- */
+  .field { position: relative; }
+  .field-input {
+    display: block;
+    width: 100%;
+    height: 53px;
+    padding: 23px 16px 8px;
+    font-family: var(--font-body), Georgia, serif;
+    font-size: 16px;
+    color: var(--color-body);
+    background: transparent;
+    border: 1px solid #000;
+    border-radius: 0;
+    appearance: none;
+  }
+  .field-input:focus { outline: 2px solid #000; outline-offset: 0; }
+  .field-label {
+    position: absolute;
+    left: 17px;
+    top: 16px;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-body);
+    pointer-events: none;
+    transition: top 120ms ease, font-size 120ms ease;
+  }
+  .field-input:focus + .field-label,
+  .field-input:not(:placeholder-shown) + .field-label {
+    top: 6px;
+    font-size: 11px;
+    line-height: 14px;
+  }
+  .field-area {
+    display: block;
+    width: 100%;
+    height: 146px;
+    padding: 16px;
+    font-family: var(--font-body), Georgia, serif;
+    font-size: 16px;
+    line-height: 28px;
+    color: var(--color-body);
+    background: transparent;
+    border: 1px solid #000;
+    border-radius: 0;
+    resize: vertical;
+  }
+  .field-area::placeholder,
+  .field-input::placeholder { color: var(--color-body); opacity: 1; }
+  .field-area:focus { outline: 2px solid #000; outline-offset: 0; }
+
+  /* ---- Industries marquee --------------------------------------------- */
+  /* Their logo strip is a static centred row when it fits (≥1280) and an
+     endless scroll when it does not — this is the same behaviour. */
+  .logos { overflow: hidden; min-height: 85px; }
+  @media (min-width: 768px) { .logos { min-height: 100px; } }
+  .logos-track {
+    display: flex;
+    width: max-content;
+    animation: logos-scroll 28s linear infinite;
+  }
+  .logos-set { display: flex; }
+  .logos-set > div { padding: 0 16px; }
+  .logos-set img { height: 80px; width: auto; display: block; }
+  @media (min-width: 768px) {
+    .logos-set > div { padding: 0 24px; }
+    .logos-set img { height: 100px; }
+  }
+  @media (min-width: 1280px) {
+    .logos-track { animation: none; width: auto; justify-content: center; }
+    .logos-set[aria-hidden="true"] { display: none; }
+  }
+  @keyframes logos-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ---- Contact form reveal -------------------------------------------- */
+  @keyframes slide-in {
+    from { transform: translateX(-24px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .slide-in { animation: slide-in 260ms ease-out both; }
+}
