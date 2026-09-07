@@ -1,47 +1,52 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   RedHawk Fab — tokens.
-   Every value below is measured off redhawkfab.com (their GoDaddy site):
-   the tan #DEC6A7 and the near-black #161616 bands, Lato for the small
-   uppercase section titles, Lusitana for everything else.
+   RedHawk Fab — design tokens.
+   The whole palette comes off their logo: a gunmetal eagle over a steel shield,
+   chrome bevel highlights, and the one word in the name that is a colour.
+   Barlow Condensed carries the heavy uppercase; Barlow does the reading.
    ========================================================================== */
 @theme inline {
-  --font-body: var(--font-lusitana);
-  --font-heading: var(--font-lato);
+  --font-sans: var(--font-barlow);
+  --font-display: var(--font-barlow-condensed);
 
-  --color-tan: #dec6a7;
-  --color-coal: #161616;
-  --color-body: #353230;
-  --color-note: #302e2c;
-  --color-hero: #696969;
-  --color-footer-text: #595959;
-  --color-rule: #e2e2e2;
-  --color-thumb: #e84141;
+  --color-ink: #0b0c0e;        /* page ground */
+  --color-steel-900: #12141a;  /* raised panel */
+  --color-steel-800: #1a1d23;  /* card */
+  --color-steel-700: #262a31;  /* line on card */
+  --color-steel-600: #3a3f47;
+  --color-steel-400: #7b818a;  /* muted copy */
+  --color-steel-300: #a7adb5;  /* body copy */
+  --color-chrome: #e9ebee;     /* headline / bevel highlight */
+  --color-white: #ffffff;
+
+  --color-red: #d8262c;        /* the "Red" in RedHawk */
+  --color-red-hot: #ff4a3d;    /* hover / weld glow */
+  --color-red-deep: #8e1419;
 }
 
-:root {
-  color-scheme: light;
-}
+:root { color-scheme: dark; }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: var(--font-body), Georgia, serif;
-  font-size: 16px;
-  line-height: 24px;
-  color: #000;
-  background-color: #fff;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--color-ink);
+  color: var(--color-steel-300);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
+::selection { background: var(--color-red); color: #fff; }
+
 :where(a, button, [tabindex], input, textarea):focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 2px;
+  outline: 2px solid var(--color-red-hot);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -54,191 +59,183 @@ body {
 }
 
 @layer components {
-  /* Their content column: 1112px inside 24px gutters, i.e. a 1160 box.
-     Below 768 the box is the full viewport; above it, viewport − 40. */
-  .wrap {
-    width: 100%;
-    max-width: 1160px;
-    margin-inline: auto;
-    padding-inline: 24px;
-  }
-  @media (min-width: 768px) {
-    .wrap { width: calc(100% - 40px); }
-  }
+  .wrap { width: 100%; max-width: 1360px; margin-inline: auto; padding-inline: 20px; }
+  @media (min-width: 640px) { .wrap { padding-inline: 32px; } }
+  @media (min-width: 1024px) { .wrap { padding-inline: 48px; } }
 
   /* ---- Type ------------------------------------------------------------ */
-  .section-title {
-    font-family: var(--font-heading), Arial, sans-serif;
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 30.8px;
-    letter-spacing: 1px;
+  .display {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
     text-transform: uppercase;
-    color: #000;
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: var(--color-chrome);
   }
-  .section-rule {
-    border: 0;
-    border-bottom: 1px solid #000;
-    margin: 16px 0 0;
+  .display-xl { font-size: clamp(3.25rem, 9.2vw, 8.75rem); font-weight: 900; }
+  .display-lg { font-size: clamp(2.5rem, 6vw, 5.5rem); }
+  .display-md { font-size: clamp(2rem, 4vw, 3.5rem); }
+  .display-sm { font-size: clamp(1.5rem, 2.4vw, 2.125rem); letter-spacing: 0; }
+
+  /* Chrome bevel — the logo's finish, on type. */
+  .chrome {
+    background: linear-gradient(180deg, #ffffff 0%, #e6e9ed 40%, #b3b9c2 52%, #eef0f3 64%, #c4c9d0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  .h4 {
-    font-size: 22px;
-    line-height: 27.5px;
-    font-weight: 400;
-    color: #000;
-  }
-  .copy {
-    font-size: 16px;
-    line-height: 24px;
-    color: var(--color-body);
-  }
-  .note {
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--color-note);
-  }
-  .hero-title {
-    font-family: var(--font-heading), Arial, sans-serif;
-    font-weight: 400;
+
+  .eyebrow {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #fff;
-    text-align: center;
-    font-size: 40px;
-    line-height: 48px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #fff;
+    color: var(--color-steel-400);
   }
-  @media (min-width: 768px) {
-    .hero-title { font-size: 48px; line-height: 57.6px; padding-bottom: 8px; }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 28px;
+    height: 2px;
+    background: var(--color-red);
+    vertical-align: middle;
+    margin-right: 12px;
+    transform: translateY(-1px);
   }
-  @media (min-width: 1280px) {
-    .hero-title { font-size: 62px; line-height: 74.4px; }
+
+  .lede { font-size: clamp(1.0625rem, 1.3vw, 1.25rem); line-height: 1.55; color: var(--color-steel-300); }
+  .copy { font-size: 1rem; line-height: 1.65; color: var(--color-steel-300); }
+  .label {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-steel-400);
   }
-  .industries-title {
-    color: var(--color-tan);
-    text-align: center;
-    font-weight: 400;
-    font-size: 28px;
-    line-height: 35px;
-  }
-  @media (min-width: 768px) {
-    .industries-title { font-size: 30px; line-height: 37.5px; }
-  }
-  @media (min-width: 1280px) {
-    .industries-title { font-size: 32px; line-height: 40px; }
+  .num {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
   }
 
   /* ---- Buttons --------------------------------------------------------- */
   .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     min-height: 56px;
-    padding: 8px 32px;
-    font-family: var(--font-body), Georgia, serif;
+    padding: 0 28px;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 1.008px;
-    line-height: normal;
+    font-size: 1.0625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     text-decoration: none;
     border: 0;
-    border-radius: 0;
     cursor: pointer;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
   }
-  .btn-light { background: #fff; color: #000; }
-  .btn-light:hover { background: #ebebeb; }
-  .btn-dark { background: #000; color: #fff; }
-  .btn-dark:hover { background: #2b2b2b; }
-  .btn:disabled { opacity: 0.55; cursor: progress; }
+  .btn:active { transform: translateY(1px); }
+  .btn-red { background: var(--color-red); color: #fff; }
+  .btn-red:hover { background: var(--color-red-hot); box-shadow: 0 0 0 1px rgba(255, 74, 61, 0.35), 0 12px 40px -12px rgba(255, 74, 61, 0.55); }
+  .btn-ghost { background: rgba(233, 235, 238, 0.06); color: var(--color-chrome); box-shadow: inset 0 0 0 1px rgba(233, 235, 238, 0.22); }
+  .btn-ghost:hover { background: rgba(233, 235, 238, 0.12); }
+  .btn:disabled { opacity: 0.55; cursor: progress; transform: none; }
 
-  .text-link {
-    color: var(--color-coal);
-    text-decoration: none;
+  /* ---- Surfaces -------------------------------------------------------- */
+  /* Brushed-steel plate: faint horizontal grain + a bevelled top edge. */
+  .plate {
+    position: relative;
+    background:
+      repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, var(--color-steel-800), var(--color-steel-900));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.6), 0 0 0 1px var(--color-steel-700);
   }
-  .text-link:hover { text-decoration: underline; }
+  .plate-cut {
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+  }
+  /* Rivet dots in the corners of a plate. */
+  .rivets::before, .rivets::after {
+    content: "";
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #8b929b, #2a2e35 70%);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+  }
+  .rivets::before { top: 12px; right: 12px; }
+  .rivets::after { bottom: 12px; left: 12px; }
 
-  /* ---- Fields (GoDaddy's floating-label boxes) ------------------------- */
+  /* Hairline rule with a red tick, used under section heads. */
+  .rule { position: relative; height: 1px; background: var(--color-steel-700); }
+  .rule::before { content: ""; position: absolute; left: 0; top: -1px; width: 72px; height: 3px; background: var(--color-red); }
+
+  /* Blueprint grid ground for the process band. */
+  .grid-bg {
+    background-color: var(--color-steel-900);
+    background-image:
+      linear-gradient(rgba(233, 235, 238, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(233, 235, 238, 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Hazard stripe — a thin red/black band. */
+  .hazard {
+    height: 6px;
+    background: repeating-linear-gradient(135deg, var(--color-red) 0 14px, #1a0708 14px 28px);
+  }
+
+  /* ---- Marquee --------------------------------------------------------- */
+  .marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ---- Scroll reveal --------------------------------------------------- */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1), transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  .reveal-d1 { transition-delay: 90ms; } .reveal-d2 { transition-delay: 180ms; } .reveal-d3 { transition-delay: 270ms; } .reveal-d4 { transition-delay: 360ms; }
+
+  /* ---- Hero entrance --------------------------------------------------- */
+  @keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  .rise { animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .rise-1 { animation-delay: 120ms; } .rise-2 { animation-delay: 260ms; } .rise-3 { animation-delay: 420ms; } .rise-4 { animation-delay: 560ms; }
+  @keyframes arc { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.9; } }
+  .arc { animation: arc 3.2s ease-in-out infinite; }
+
+  /* ---- Fields ---------------------------------------------------------- */
   .field { position: relative; }
-  .field-input {
+  .field-input, .field-area {
     display: block;
     width: 100%;
-    height: 53px;
-    padding: 23px 16px 8px;
-    font-family: var(--font-body), Georgia, serif;
-    font-size: 16px;
-    color: var(--color-body);
-    background: transparent;
-    border: 1px solid #000;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
+    color: var(--color-chrome);
+    background: rgba(11, 12, 14, 0.6);
+    border: 1px solid var(--color-steel-600);
     border-radius: 0;
     appearance: none;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
   }
-  .field-input:focus { outline: 2px solid #000; outline-offset: 0; }
+  .field-input { height: 58px; padding: 24px 16px 8px; }
+  .field-area { min-height: 150px; padding: 18px 16px; line-height: 1.6; resize: vertical; }
+  .field-input:focus, .field-area:focus { outline: none; border-color: var(--color-red); box-shadow: 0 0 0 1px var(--color-red); }
+  .field-input::placeholder, .field-area::placeholder { color: var(--color-steel-400); opacity: 1; }
   .field-label {
-    position: absolute;
-    left: 17px;
-    top: 16px;
-    font-size: 16px;
-    line-height: 20px;
-    color: var(--color-body);
+    position: absolute; left: 17px; top: 19px;
+    font-size: 1rem; line-height: 20px; color: var(--color-steel-400);
     pointer-events: none;
-    transition: top 120ms ease, font-size 120ms ease;
+    transition: top 120ms ease, font-size 120ms ease, color 120ms ease;
   }
   .field-input:focus + .field-label,
   .field-input:not(:placeholder-shown) + .field-label {
-    top: 6px;
-    font-size: 11px;
-    line-height: 14px;
+    top: 7px; font-size: 0.6875rem; line-height: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-steel-400);
   }
-  .field-area {
-    display: block;
-    width: 100%;
-    height: 146px;
-    padding: 16px;
-    font-family: var(--font-body), Georgia, serif;
-    font-size: 16px;
-    line-height: 28px;
-    color: var(--color-body);
-    background: transparent;
-    border: 1px solid #000;
-    border-radius: 0;
-    resize: vertical;
-  }
-  .field-area::placeholder,
-  .field-input::placeholder { color: var(--color-body); opacity: 1; }
-  .field-area:focus { outline: 2px solid #000; outline-offset: 0; }
-
-  /* ---- Industries marquee --------------------------------------------- */
-  /* Their logo strip is a static centred row when it fits (≥1280) and an
-     endless scroll when it does not — this is the same behaviour. */
-  .logos { overflow: hidden; min-height: 85px; }
-  @media (min-width: 768px) { .logos { min-height: 100px; } }
-  .logos-track {
-    display: flex;
-    width: max-content;
-    animation: logos-scroll 28s linear infinite;
-  }
-  .logos-set { display: flex; }
-  .logos-set > div { padding: 0 16px; }
-  .logos-set img { height: 80px; width: auto; display: block; }
-  @media (min-width: 768px) {
-    .logos-set > div { padding: 0 24px; }
-    .logos-set img { height: 100px; }
-  }
-  @media (min-width: 1280px) {
-    .logos-track { animation: none; width: auto; justify-content: center; }
-    .logos-set[aria-hidden="true"] { display: none; }
-  }
-  @keyframes logos-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* ---- Contact form reveal -------------------------------------------- */
-  @keyframes slide-in {
-    from { transform: translateX(-24px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  .slide-in { animation: slide-in 260ms ease-out both; }
+  .field-input:focus + .field-label { color: var(--color-red-hot); }
 }

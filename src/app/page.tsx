@@ -1,20 +1,28 @@
+import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
-import { About } from "@/components/About";
-import { Gallery } from "@/components/Gallery";
+import { Capabilities } from "@/components/Capabilities";
+import { Work } from "@/components/Work";
+import { Mission } from "@/components/Mission";
 import { Industries } from "@/components/Industries";
-import { Contact } from "@/components/Contact";
+import { Process } from "@/components/Process";
+import { Areas } from "@/components/Areas";
+import { Quote } from "@/components/Quote";
 import { Footer } from "@/components/Footer";
 import { Schema } from "@/components/Schema";
 
 export default function Home() {
   return (
     <>
-      <Hero />
+      <Nav />
       <main id="main">
-        <About />
-        <Gallery />
+        <Hero />
+        <Capabilities />
+        <Work />
+        <Mission />
         <Industries />
-        <Contact />
+        <Process />
+        <Areas />
+        <Quote />
       </main>
       <Footer />
       <Schema />

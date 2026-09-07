@@ -12,6 +12,7 @@ type Payload = {
   quantity?: string;
   neededBy?: string;
   message?: string;
+  area?: string;
   /** honeypot — real people never fill this in */
   website?: string;
   /** ms since the form mounted */
@@ -83,6 +84,7 @@ export async function POST(req: Request) {
   const quantity = clean(body.quantity, 60);
   const neededBy = clean(body.neededBy, 120);
   const message = clean(body.message, 5000);
+  const area = clean(body.area, 80);
 
   if (!EMAIL_RE.test(email)) {
     return Response.json({ ok: false, error: "Please enter a valid email address." }, { status: 422 });
@@ -120,6 +122,7 @@ export async function POST(req: Request) {
     phone ? `Phone: ${phone}` : null,
     quantity ? `Quantity: ${quantity}` : null,
     neededBy ? `Needed by: ${neededBy}` : null,
+    area ? `Came in from: ${area} service-area page` : null,
     ``,
     `Project:`,
     message || "(no description — see attached files)",

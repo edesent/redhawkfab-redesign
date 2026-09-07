@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SITE } from "@/data/site";
+import { Reveal } from "@/components/Reveal";
 import "./globals.css";
 
 /**
@@ -13,25 +14,29 @@ const LIVE = process.env.NEXT_PUBLIC_SITE_LIVE === "true";
 
 // Self-hosted: next/font/google downloads at build time and a blip on Vercel's
 // build workers kills the whole production deploy.
-const lato = localFont({
-  variable: "--font-lato",
+const barlow = localFont({
+  variable: "--font-barlow",
   display: "swap",
   src: [
-    { path: "../fonts/lato-400.woff2", weight: "400", style: "normal" },
-    { path: "../fonts/lato-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/barlow-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/barlow-500.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/barlow-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/barlow-700.woff2", weight: "700", style: "normal" },
   ],
 });
 
-const lusitana = localFont({
-  variable: "--font-lusitana",
+const condensed = localFont({
+  variable: "--font-barlow-condensed",
   display: "swap",
   src: [
-    { path: "../fonts/lusitana-400.woff2", weight: "400", style: "normal" },
-    { path: "../fonts/lusitana-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/barlow-condensed-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/barlow-condensed-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/barlow-condensed-800.woff2", weight: "800", style: "normal" },
+    { path: "../fonts/barlow-condensed-900.woff2", weight: "900", style: "normal" },
   ],
 });
 
-const TITLE = `${SITE.name} — Quality Welding and Fabrication | Port Huron, MI`;
+const TITLE = `${SITE.name} — Precision Welding & Fabrication | Port Huron, MI`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -62,21 +67,22 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#161616",
-  colorScheme: "light",
+  themeColor: "#0b0c0e",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${lato.variable} ${lusitana.variable}`}>
-      <body className="min-h-screen bg-white">
+    <html lang="en" className={`${barlow.variable} ${condensed.variable}`}>
+      <body className="min-h-screen bg-ink">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:bg-red focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
         >
           Skip to content
         </a>
         {children}
+        <Reveal />
       </body>
     </html>
   );

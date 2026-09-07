@@ -34,7 +34,7 @@ declare global {
   }
 }
 
-export function QuoteForm({ onCancel }: { onCancel: () => void }) {
+export function QuoteForm({ area }: { area?: string }) {
   const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [fileError, setFileError] = useState<string | null>(null);
@@ -147,6 +147,7 @@ export function QuoteForm({ onCancel }: { onCancel: () => void }) {
           quantity: get("quantity"),
           neededBy: get("neededBy"),
           message: get("message"),
+          area: get("area"),
           website: get("website"), // honeypot
           elapsed: Date.now() - mounted.current,
           turnstile: tsToken.current || undefined,
@@ -172,28 +173,30 @@ export function QuoteForm({ onCancel }: { onCancel: () => void }) {
 
   if (status.kind === "sent") {
     return (
-      <div className="slide-in px-6 py-14" role="status">
-        <h3 className="h4 mb-6">Thank you!</h3>
-        <p className="copy mb-6">
+      <div role="status" className="py-6">
+        <p className="label text-red">Received</p>
+        <h3 className="display display-md mt-3">Thank you.</h3>
+        <p className="lede mt-5 max-w-[48ch]">
           We have your request and your files. We&rsquo;ll look it over and get back to you with a quote and a lead time.
           Need it sooner? Call{" "}
-          <a href={`tel:${SITE.phoneE164}`} className="text-link underline">{SITE.phoneDisplay}</a>.
+          <a href={`tel:${SITE.phoneE164}`} className="text-chrome underline decoration-red underline-offset-4">{SITE.phoneDisplay}</a>.
         </p>
-        <button type="button" onClick={onCancel} className="btn btn-dark">
-          Done
+        <button type="button" onClick={() => setStatus({ kind: "idle" })} className="btn btn-ghost mt-8">
+          Send another
         </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="slide-in px-6 py-14" aria-busy={busy}>
-      <h3 className="h4 mb-2">Drop us a line!</h3>
-      <p className="note mb-6">
-        Send us a print (PDF) or CAD file and when you need it by — we&rsquo;ll reply with a quote and a lead time.
+    <form onSubmit={onSubmit} noValidate aria-busy={busy}>
+      <h3 className="display display-sm">Quote request</h3>
+      <p className="copy mt-2 mb-8 text-steel-400">
+        Attach the print (PDF) or CAD file and tell us when you need it. Email is the only required field.
       </p>
+      {area && <input type="hidden" name="area" value={area} />}
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
         <div className="field">
           <input id="q-name" name="name" type="text" autoComplete="name" placeholder=" " className="field-input" />
           <label htmlFor="q-name" className="field-label">Name</label>
@@ -210,7 +213,7 @@ export function QuoteForm({ onCancel }: { onCancel: () => void }) {
           <input id="q-company" name="company" type="text" autoComplete="organization" placeholder=" " className="field-input" />
           <label htmlFor="q-company" className="field-label">Company</label>
         </div>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid gap-6 sm:grid-cols-2">
           <div className="field">
             <input id="q-qty" name="quantity" type="text" inputMode="numeric" placeholder=" " className="field-input" />
             <label htmlFor="q-qty" className="field-label">Quantity</label>
@@ -234,14 +237,14 @@ export function QuoteForm({ onCancel }: { onCancel: () => void }) {
           <button
             type="button"
             onClick={() => fileInput.current?.click()}
-            className="inline-flex items-center gap-1 pl-4 text-[16px] text-coal hover:underline"
+            className="inline-flex items-center gap-2 text-[1rem] font-medium text-chrome hover:text-red-hot"
           >
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
             </svg>
             Attach Files
           </button>
-          <span className="note">Attachments ({files.length})</span>
+          <span className="label">Attachments ({files.length})</span>
           <input
             ref={fileInput}
             type="file"
@@ -254,17 +257,17 @@ export function QuoteForm({ onCancel }: { onCancel: () => void }) {
         </div>
 
         {files.length > 0 && (
-          <ul className="mt-3 flex flex-col gap-2 pl-4">
+          <ul className="mt-4 flex flex-col gap-2">
             {files.map((f) => (
-              <li key={`${f.name}-${f.size}`} className="flex items-center justify-between gap-3 border-b border-black/20 pb-1 text-[14px] leading-5 text-body">
+              <li key={`${f.name}-${f.size}`} className="flex items-center justify-between gap-3 border-b border-steel-700 pb-2 text-[0.9375rem] leading-5 text-steel-300">
                 <span className="truncate">
-                  {f.name} <span className="text-note">({fmt(f.size)})</span>
+                  {f.name} <span className="text-steel-400">({fmt(f.size)})</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => setFiles(files.filter((x) => x !== f))}
                   aria-label={`Remove ${f.name}`}
-                  className="shrink-0 px-1 text-coal hover:underline"
+                  className="label shrink-0 !text-[0.6875rem] text-steel-400 hover:text-red-hot"
                 >
                   Remove
                 </button>
@@ -272,32 +275,30 @@ export function QuoteForm({ onCancel }: { onCancel: () => void }) {
             ))}
           </ul>
         )}
-        {fileError && <p className="note mt-2 text-red-800" role="alert">{fileError}</p>}
+        {fileError && <p className="mt-3 text-[0.9375rem] text-red-hot" role="alert">{fileError}</p>}
       </div>
 
-      <p className="note mt-12">
+      <p className="mt-8 text-[0.875rem] leading-relaxed text-steel-400">
         Prints and CAD files up to 50 MB each — PDF, DWG, DXF, STEP, IGES, SolidWorks, or a ZIP.
       </p>
 
       {turnstileKey && <div ref={tsRef} className="mt-6" />}
 
       {status.kind === "error" && (
-        <p className="copy mt-6 border border-black/40 px-4 py-3 text-[15px] leading-6" role="alert">
+        <p className="mt-6 border border-red/60 bg-red/10 px-4 py-3 text-[0.9375rem] leading-6 text-chrome" role="alert">
           {status.message}
         </p>
       )}
 
-      <div className="mt-10 flex items-center justify-center">
-        <button type="submit" className="btn btn-dark" disabled={busy}>
+      <div className="mt-8 flex flex-wrap items-center gap-5">
+        <button type="submit" className="btn btn-red" disabled={busy}>
           {status.kind === "uploading"
             ? `Uploading ${status.done + 1}/${status.total}… ${status.pct}%`
             : status.kind === "sending"
               ? "Sending…"
-              : "Send"}
+              : "Send for a quote"}
         </button>
-        <button type="button" onClick={onCancel} disabled={busy} className="ml-4 text-[16px] leading-6 text-coal underline">
-          Cancel
-        </button>
+        <p className="text-[0.875rem] text-steel-400">We reply with a price and a lead time.</p>
       </div>
     </form>
   );

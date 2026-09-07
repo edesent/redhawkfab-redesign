@@ -1,12 +1,17 @@
 import Link from "next/link";
-import { SITE } from "@/data/site";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-tan px-6 text-center">
-      <p className="section-title mb-4">Page not found</p>
-      <p className="copy mb-8">That page isn&rsquo;t here. {SITE.name} is a one-page site.</p>
-      <Link href="/" className="btn btn-dark">Back to the site</Link>
-    </main>
+    <>
+      <Nav solidFromStart />
+      <main className="flex min-h-[70vh] flex-col items-center justify-center bg-ink px-6 pt-32 text-center">
+        <p className="eyebrow [&::before]:hidden">404</p>
+        <h1 className="display display-lg mt-4">That page isn&rsquo;t here.</h1>
+        <Link href="/" className="btn btn-red mt-10">Back to RedHawk Fab</Link>
+      </main>
+      <Footer />
+    </>
   );
 }

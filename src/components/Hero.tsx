@@ -1,47 +1,68 @@
 import Image from "next/image";
+import Link from "next/link";
 import { SITE } from "@/data/site";
 
-/**
- * Their header: logo on top, headline on a rule, one line of copy, one button,
- * all centred over a darkened photo. Heights are theirs — 675 / 746 / 780.
- */
+const MARQUEE = ["Precision parts", "Weldments", "Frames", "Prototypes", "R&D builds", "Production runs", "Built to print", "On time", "Port Huron, MI"];
+
 export function Hero() {
   return (
-    <header className="relative flex min-h-[675px] flex-col bg-hero md:min-h-[746px] xl:min-h-[780px]">
+    <section className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-ink">
       <Image
         src="/hero.jpg"
-        alt=""
+        alt="A RedHawk Fab welder laying a bead on a steel frame"
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center"
+        className="object-cover object-[68%_50%] lg:object-[62%_50%]"
       />
-      <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
+      {/* Type over a photo needs a side wash, not one flat scrim. */}
+      <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/78 to-ink/10 lg:via-ink/60" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink via-ink/40 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink/80 to-transparent" aria-hidden="true" />
+      {/* Weld-arc glow behind the headline. */}
+      <div className="arc absolute -left-40 top-1/3 h-[60vh] w-[60vw] rounded-full bg-red/10 blur-3xl" aria-hidden="true" />
 
-      <div className="relative flex flex-col items-center pt-2 md:pt-6">
-        <a href="/" aria-label={`${SITE.name} — home`} className="block">
-          <Image
-            src="/logo.png"
-            alt={SITE.name}
-            width={200}
-            height={200}
-            priority
-            className="h-[110px] w-[110px] object-contain md:h-[200px] md:w-[200px]"
-            style={{ filter: "drop-shadow(0 0 18px rgba(255,255,255,0.28))" }}
-          />
-        </a>
-      </div>
-
-      <div className="wrap relative mt-[88px] flex flex-col items-center pb-[72px] md:mt-[188px] md:pb-6">
-        <h1 className="hero-title w-full md:max-w-[668px] xl:max-w-[770px]">{SITE.tagline}</h1>
-        <p className="mt-2 mb-2 w-full text-center text-[22px] leading-[33px] text-white md:mt-4 md:mb-4 md:max-w-[668px] xl:max-w-[750px]">
-          We go above and beyond for our customers when it comes to delivering on time quality
-          precision parts.
+      <div className="wrap relative pt-40 pb-16 md:pb-24 lg:pb-28">
+        <p className="eyebrow rise rise-1">Welding &amp; Fabrication — Port Huron, MI</p>
+        <h1 className="display display-xl rise rise-2 mt-6 max-w-[17ch] [text-shadow:0_2px_24px_rgba(0,0,0,0.6)]">
+          <span className="chrome">Built to print.</span>
+          <br />
+          <span className="text-chrome">Delivered on time.</span>
+        </h1>
+        <p className="lede rise rise-3 mt-8 max-w-[52ch] [text-shadow:0_1px_12px_rgba(0,0,0,0.7)]">
+          Precision welding and fabrication for automation, energy, industrial and agricultural work.
+          Send us a print or a CAD file and we&rsquo;ll come back with a quote and a lead time.
         </p>
-        <a href="#quote" className="btn btn-light mt-8">
-          Get Started
-        </a>
+        <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
+          <Link href="#quote" className="btn btn-red">
+            Request a Quote
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+          </Link>
+          <Link href="#work" className="btn btn-ghost">See the Work</Link>
+          <a href={`tel:${SITE.phoneE164}`} className="label ml-2 !text-[0.8125rem] text-steel-300 hover:text-white">
+            or call {SITE.phoneDisplay}
+          </a>
+        </div>
       </div>
-    </header>
+
+      {/* Capability ticker on a steel bar. */}
+      <div className="relative border-t border-steel-700 bg-steel-900/90 backdrop-blur">
+        <div className="hazard absolute inset-x-0 -top-[6px]" aria-hidden="true" />
+        <div className="marquee py-4" aria-hidden="true">
+          <div className="marquee-track">
+            {[0, 1].map((k) => (
+              <div key={k} className="flex shrink-0 items-center">
+                {MARQUEE.map((t) => (
+                  <span key={t} className="display display-sm flex items-center !text-[1.375rem] text-steel-300">
+                    <span className="mx-7 text-red">✦</span>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

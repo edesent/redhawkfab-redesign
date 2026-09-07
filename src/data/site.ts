@@ -33,12 +33,42 @@ export const SITE = {
 } as const;
 
 export const INDUSTRIES = [
-  { src: "/industries/automation.png", alt: "Automation", w: 139, h: 100 },
-  { src: "/industries/energy.png", alt: "Energy — oil and gas", w: 112, h: 100 },
-  { src: "/industries/industrial.png", alt: "Industrial", w: 160, h: 100 },
-  { src: "/industries/prototype.jpg", alt: "Prototype", w: 100, h: 100 },
-  { src: "/industries/agriculture.png", alt: "Agriculture", w: 100, h: 100 },
-  { src: "/industries/rd.png", alt: "Research and development", w: 100, h: 100 },
+  { name: "Automation", blurb: "Frames, guarding, mounts and fixtures for automated cells." },
+  { name: "Energy", blurb: "Oil and gas hardware built to spec and delivered on schedule." },
+  { name: "Industrial", blurb: "Plant and process work — weldments, brackets, structural repair." },
+  { name: "Prototype", blurb: "First articles and one-offs for teams who need a part in hand." },
+  { name: "Agriculture", blurb: "Implements, attachments and repairs that hold up in the field." },
+  { name: "R&D", blurb: "Iterative builds for engineers still figuring out the final design." },
+] as const;
+
+export const CAPABILITIES = [
+  {
+    n: "01",
+    name: "Welding",
+    blurb: "Clean, consistent welds on structural and precision work — from a single piece to a production run.",
+  },
+  {
+    n: "02",
+    name: "Fabrication",
+    blurb: "Frames, weldments, brackets and assemblies cut, formed and built to your print.",
+  },
+  {
+    n: "03",
+    name: "Prototypes & R&D",
+    blurb: "One-offs and first articles turned around fast, with the fit and finish of a finished part.",
+  },
+  {
+    n: "04",
+    name: "Production Parts",
+    blurb: "Repeatable precision parts, quoted with a real lead time and delivered when we said.",
+  },
+] as const;
+
+export const PROCESS = [
+  { n: "01", name: "Send the print", blurb: "Attach a PDF drawing or a CAD file — STEP, DWG, DXF, SolidWorks — right on this page." },
+  { n: "02", name: "Get a quote and a lead time", blurb: "We review the print and reply with a price and a delivery date, not a guess." },
+  { n: "03", name: "We build to print", blurb: "Welding and fabrication to the drawing, checked against the drawing." },
+  { n: "04", name: "Delivered on time", blurb: "The date we quoted is the date it ships. That is the whole reputation." },
 ] as const;
 
 /**
