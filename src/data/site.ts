@@ -11,7 +11,7 @@ export const SITE = {
     "Quality welding and fabrication in Port Huron, Michigan. We go above and beyond for our customers when it comes to delivering on-time, quality precision parts.",
   /** Demo host until they go live — see README. */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://redhawkfab.elijahdesent.com",
-  phoneDisplay: "+1.5866755982",
+  phoneDisplay: "(586) 675-5982",
   phoneE164: "+15866755982",
   /** Split so the address never appears assembled in the HTML. */
   emailUser: "FabWithRedHawk",
