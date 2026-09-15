@@ -72,18 +72,19 @@ export const PROCESS = [
 ] as const;
 
 /**
- * Gallery, in the order the live site shows it (their six shop photos first),
- * followed by the three supplied welding photographs.
- * `position` is the focal point the live site uses for that slide.
+ * Current shop gallery. The original placeholder/work photos have been
+ * replaced with the newly uploaded RedHawk Fab photos.
  */
 export const GALLERY = [
-  { src: "/gallery/01.jpg", alt: "Long welded steel cross-frame on a yellow shop cart, ready for finishing", position: "56.85% 23.57%" },
-  { src: "/gallery/02.jpg", alt: "Close-up of a ground and polished circular weld seam on plate steel", position: "50% 50%" },
-  { src: "/gallery/03.jpg", alt: "Welded steel frame assembly clamped on the fabrication table", position: "50% 50%" },
-  { src: "/gallery/04.jpg", alt: "Fabricated steel bracket after welding", position: "50% 50%" },
-  { src: "/gallery/05.jpg", alt: "Steel weldment standing on the shop floor", position: "50% 50%" },
-  { src: "/gallery/06.jpg", alt: "I-beam section with gusset plates, welds complete", position: "50% 50%" },
-  { src: "/gallery/07.jpg", alt: "TIG welding a stainless tube joint", position: "50% 50%" },
-  { src: "/gallery/08.jpg", alt: "MIG welding a steel plate seam, sparks flying", position: "50% 50%" },
-  { src: "/gallery/09.jpg", alt: "Welder working at a fixture table in the shop", position: "50% 50%" },
+  { src: "/gallery/124ac121-3bfa-4cc6-b768-7953d9d7aba0-1-105-c.jpeg", alt: "RedHawk Fab shop fabrication work", position: "50% 50%" },
+  { src: "/gallery/202c75f8-804a-48cc-a6b6-a41a9dd5c1da-1-105-c.jpeg", alt: "RedHawk Fab welding and fabrication work", position: "50% 50%" },
+  { src: "/gallery/56eb76cd-9adb-4a7c-863f-c69c50615c08-1-105-c.jpeg", alt: "RedHawk Fab fabricated metal work", position: "50% 50%" },
+  { src: "/gallery/8cd1b0b8-5ee6-4a25-9186-a8fec341dccb-1-105-c.jpeg", alt: "RedHawk Fab welding work", position: "50% 50%" },
+  { src: "/gallery/97153d77-8019-452a-944c-49ee619e80d7-1-105-c.jpeg", alt: "RedHawk Fab fabrication project", position: "50% 50%" },
+  { src: "/gallery/983fee6d-9c21-43d8-968e-c05e693aa88e-1-105-c.jpeg", alt: "RedHawk Fab metal fabrication", position: "50% 50%" },
+  { src: "/gallery/9cf87c3d-d842-406a-a861-b8a90b32743d-1-105-c.jpeg", alt: "RedHawk Fab shop project", position: "50% 50%" },
+  { src: "/gallery/a7a3e6cd-81b6-4810-ba5c-7f33c4a96342-1-105-c.jpeg", alt: "RedHawk Fab welding project", position: "50% 50%" },
+  { src: "/gallery/b20569f3-a7ea-4d26-b6bb-6b33d514aaf2-1-105-c.jpeg", alt: "RedHawk Fab fabricated metal assembly", position: "50% 50%" },
+  { src: "/gallery/d3ba1eb7-b4b1-4430-90dd-378ce34f732d-1-105-c.jpeg", alt: "RedHawk Fab welding and fabrication", position: "50% 50%" },
+  { src: "/gallery/img-2648.jpeg", alt: "RedHawk Fab shop fabrication work", position: "50% 50%" },
 ] as const;
