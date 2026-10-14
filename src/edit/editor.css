@@ -1,0 +1,24 @@
+/* Loaded only on the edit host, with the editor. */
+
+html[data-editor] body { padding-bottom: 96px; }
+
+html[data-editing] [data-edit] {
+  outline: 1px dashed rgba(255, 74, 61, 0.45);
+  outline-offset: 3px;
+  cursor: text;
+  -webkit-user-select: text;
+  user-select: text;
+}
+html[data-editing] [data-edit]:hover { outline: 1px solid #ff4a3d; }
+html[data-editing] [data-edit]:focus {
+  outline: 2px solid #ff4a3d;
+  background: rgba(216, 38, 44, 0.12);
+  /* Hover-only text (industry blurbs) stays put while you type in it. */
+  opacity: 1 !important;
+  transform: none !important;
+}
+html[data-editing] [data-edit][data-changed] { outline: 2px solid #f5b301; }
+html[data-editing] [data-edit][data-conflict] { outline: 2px solid #f5b301; background: rgba(245, 179, 1, 0.16); }
+
+/* Hold the ticker still so its words can be clicked. */
+html[data-editing] .marquee-track { animation-play-state: paused; }

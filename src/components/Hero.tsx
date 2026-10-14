@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/data/site";
-
-const MARQUEE = ["Precision parts", "Weldments", "Frames", "Prototypes", "R&D builds", "Production runs", "Built to print", "On time", "Port Huron, MI"];
+import { copy, text } from "@/content";
 
 export function Hero() {
   return (
@@ -23,24 +22,21 @@ export function Hero() {
       <div className="arc absolute -left-40 top-1/3 h-[60vh] w-[60vw] rounded-full bg-red/10 blur-3xl" aria-hidden="true" />
 
       <div className="wrap relative pt-40 pb-16 md:pb-24 lg:pb-28">
-        <p className="eyebrow rise rise-1">Welding &amp; Fabrication<span className="hidden sm:inline"> — Port Huron, MI</span></p>
+        <p className="eyebrow rise rise-1"><span {...text("hero.eyebrow")} /><span className="hidden sm:inline"> <span {...text("hero.eyebrowPlace")} /></span></p>
         <h1 className="display display-xl rise rise-2 mt-6 max-w-[17ch] [text-shadow:0_2px_24px_rgba(0,0,0,0.6)]">
-          <span className="chrome">Built to print.</span>
+          <span className="chrome" {...text("hero.headline")} />
           <br />
-          <span className="text-chrome">Delivered on time.</span>
+          <span className="text-chrome" {...text("hero.headlineAccent")} />
         </h1>
-        <p className="lede rise rise-3 mt-8 max-w-[52ch] [text-shadow:0_1px_12px_rgba(0,0,0,0.7)]">
-          Precision welding and fabrication for automation, energy, industrial and agricultural work.
-          Send us a print or a CAD file and we&rsquo;ll come back with a quote and a lead time.
-        </p>
+        <p className="lede rise rise-3 mt-8 max-w-[52ch] [text-shadow:0_1px_12px_rgba(0,0,0,0.7)]" {...text("hero.lede")} />
         <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
           <Link href="#quote" className="btn btn-red">
-            Request a Quote
+            <span {...text("hero.ctaQuote")} />
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
           </Link>
-          <Link href="#work" className="btn btn-ghost">See the Work</Link>
+          <Link href="#work" className="btn btn-ghost"><span {...text("hero.ctaWork")} /></Link>
           <a href={`tel:${SITE.phoneE164}`} className="label ml-2 !text-[0.8125rem] text-steel-300 hover:text-white">
-            or call {SITE.phoneDisplay}
+            <span {...text("hero.call")} /> {SITE.phoneDisplay}
           </a>
         </div>
       </div>
@@ -52,10 +48,10 @@ export function Hero() {
           <div className="marquee-track">
             {[0, 1].map((k) => (
               <div key={k} className="flex shrink-0 items-center">
-                {MARQUEE.map((t) => (
-                  <span key={t} className="display display-sm flex items-center !text-[1.375rem] text-steel-300">
+                {copy.hero.ticker.map((_, i) => (
+                  <span key={i} className="display display-sm flex items-center !text-[1.375rem] text-steel-300">
                     <span className="mx-7 text-red">✦</span>
-                    {t}
+                    <span {...text(`hero.ticker.${i}`)} />
                   </span>
                 ))}
               </div>

@@ -7,7 +7,8 @@ import { Footer } from "@/components/Footer";
 import { Quote } from "@/components/Quote";
 import { SectionHead } from "@/components/SectionHead";
 import { AREAS, AREA_BY_SLUG, nearby } from "@/data/areas";
-import { CAPABILITIES, INDUSTRIES, SITE } from "@/data/site";
+import { SITE } from "@/data/site";
+import { copy, text } from "@/content";
 
 type Params = { slug: string };
 
@@ -68,11 +69,11 @@ export default async function AreaPage({ params }: { params: Promise<Params> }) 
               lede={`The same shop and the same standard whether the print comes from ${a.name} or from across the state: precision parts, built to the drawing, delivered on the date we quoted.`}
             />
             <ul className="grid gap-4 sm:grid-cols-2">
-              {CAPABILITIES.map((c, i) => (
-                <li key={c.n} className={`plate plate-cut reveal reveal-d${i} p-6`}>
-                  <span className="num text-[2rem] text-red">{c.n}</span>
-                  <h3 className="display display-sm mt-3 !text-[1.375rem]">{c.name}</h3>
-                  <p className="copy mt-2 text-steel-400">{c.blurb}</p>
+              {copy.capabilities.items.map((_, i) => (
+                <li key={i} className={`plate plate-cut reveal reveal-d${i} p-6`}>
+                  <span className="num text-[2rem] text-red">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="display display-sm mt-3 !text-[1.375rem]" {...text(`capabilities.items.${i}.name`)} />
+                  <p className="copy mt-2 text-steel-400" {...text(`capabilities.items.${i}.blurb`)} />
                 </li>
               ))}
             </ul>
@@ -84,10 +85,10 @@ export default async function AreaPage({ params }: { params: Promise<Params> }) 
           <div className="wrap">
             <SectionHead eyebrow="Industries" title={<>Who calls us from <span className="chrome">{a.county} County</span></>} />
             <ul className="mt-12 grid gap-px bg-steel-700 sm:grid-cols-2 lg:grid-cols-3">
-              {INDUSTRIES.map((ind, i) => (
-                <li key={ind.name} className={`reveal reveal-d${i % 3} bg-steel-900 p-7`}>
-                  <h3 className="display display-sm !text-[1.5rem]">{ind.name}</h3>
-                  <p className="copy mt-2 text-steel-400">{ind.blurb}</p>
+              {copy.industries.items.map((_, i) => (
+                <li key={i} className={`reveal reveal-d${i % 3} bg-steel-900 p-7`}>
+                  <h3 className="display display-sm !text-[1.5rem]" {...text(`industries.items.${i}.name`)} />
+                  <p className="copy mt-2 text-steel-400" {...text(`industries.items.${i}.blurb`)} />
                 </li>
               ))}
             </ul>

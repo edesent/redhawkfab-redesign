@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { SITE } from "@/data/site";
 import { Reveal } from "@/components/Reveal";
+import { EditGate } from "@/edit/EditGate";
 import "./globals.css";
 
 /**
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         {children}
         <Reveal />
+        <EditGate />
       </body>
     </html>
   );

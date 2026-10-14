@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AREAS, COUNTIES } from "@/data/areas";
+import { text } from "@/content";
 import { SectionHead } from "./SectionHead";
 
 /** Homepage band: the service area as a photo plate with the town list on it. */
@@ -10,11 +11,7 @@ export function Areas() {
       <Image src="/band-workshop.jpg" alt="" fill sizes="100vw" className="object-cover opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-r from-steel-900 via-steel-900/85 to-steel-900/40" aria-hidden="true" />
       <div className="wrap relative">
-        <SectionHead
-          eyebrow="Areas we serve"
-          title={<>The Blue Water region <span className="chrome">and the Thumb</span></>}
-          lede="Based in Port Huron. We quote and deliver across St. Clair, Sanilac, Lapeer and northern Macomb counties — and ship anywhere a print comes from."
-        />
+        <SectionHead edit="areas" />
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {COUNTIES.map((c, i) => (
             <div key={c} className={`reveal reveal-d${i}`}>
@@ -32,7 +29,7 @@ export function Areas() {
             </div>
           ))}
         </div>
-        <Link href="/service-areas" className="btn btn-ghost reveal mt-12">All service areas</Link>
+        <Link href="/service-areas" className="btn btn-ghost reveal mt-12"><span {...text("areas.cta")} /></Link>
       </div>
     </section>
   );

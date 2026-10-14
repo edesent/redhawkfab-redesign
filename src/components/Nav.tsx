@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SITE } from "@/data/site";
+import { text } from "@/content";
 
 const NAV = [
   { href: "/#capabilities", label: "Capabilities" },
@@ -53,7 +54,7 @@ export function Nav({ solidFromStart = false }: { solidFromStart?: boolean }) {
           ))}
         </nav>
         <Link href="/#quote" className="btn btn-red ml-auto hidden !min-h-[46px] !px-5 !text-[0.9375rem] lg:ml-0 lg:inline-flex">
-          Request a Quote
+          <span {...text("nav.cta")} />
         </Link>
 
         <button
@@ -82,7 +83,7 @@ export function Nav({ solidFromStart = false }: { solidFromStart?: boolean }) {
             </Link>
           ))}
           <Link href="/#quote" onClick={() => setOpen(false)} className="btn btn-red mt-6 w-full">
-            Request a Quote
+            <span {...text("nav.cta")} />
           </Link>
           <a href={`tel:${SITE.phoneE164}`} className="label mt-6 text-center text-steel-300">
             {SITE.phoneDisplay}

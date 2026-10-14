@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SITE } from "@/data/site";
 import { AREAS } from "@/data/areas";
+import { text } from "@/content";
 import { Email } from "./Email";
 
 export function Footer() {
@@ -12,9 +13,7 @@ export function Footer() {
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-lift.png" alt={SITE.name} width={1024} height={932} className="h-44 w-auto md:h-52" />
-            <p className="copy mt-6 max-w-[38ch] text-steel-400">
-              Quality welding and fabrication in Port Huron, Michigan. Precision parts, built to print and delivered on time.
-            </p>
+            <p className="copy mt-6 max-w-[38ch] text-steel-400" {...text("footer.blurb")} />
           </div>
           <div>
             <p className="label mb-4">Contact</p>
@@ -39,7 +38,7 @@ export function Footer() {
         </div>
         <div className="mt-14 flex flex-col gap-3 border-t border-steel-700 pt-6 text-[0.875rem] text-steel-400 sm:flex-row sm:items-center sm:justify-between">
           <p>Copyright © {new Date().getFullYear()} {SITE.legalName} — All Rights Reserved.</p>
-          <p className="label !text-[0.6875rem]">Port Huron · St. Clair County · Michigan</p>
+          <p className="label !text-[0.6875rem]" {...text("footer.region")} />
         </div>
       </div>
     </footer>

@@ -1,10 +1,5 @@
 import Image from "next/image";
-
-const PILLARS = [
-  { k: "Precise", v: "Products that reflect the unique needs of the client — built to the print, checked against the print." },
-  { k: "High quality", v: "An expectation of high quality on every piece, not just the ones somebody is going to look at closely." },
-  { k: "Timely", v: "We go above and beyond to deliver on time. The lead time we quote is the lead time you get." },
-];
+import { copy, text } from "@/content";
 
 export function Mission() {
   return (
@@ -14,15 +9,15 @@ export function Mission() {
       <img src="/logo-mark.png" alt="" aria-hidden="true" className="pointer-events-none absolute -right-24 -top-16 w-[720px] max-w-none opacity-[0.07] lg:w-[900px]" />
       <div className="wrap relative grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:items-center">
         <div className="reveal">
-          <p className="eyebrow">About RedHawk Fab</p>
+          <p className="eyebrow" {...text("about.eyebrow")} />
           <blockquote className="display display-md mt-6 max-w-[20ch] !leading-[1.02] !tracking-normal !normal-case text-chrome">
-            &ldquo;Our mission is to create precise products that reflect the unique needs of our clients — maintaining an expectation of high quality while delivering timely results.&rdquo;
+            &ldquo;<span {...text("about.quote")} />&rdquo;
           </blockquote>
           <div className="mt-12 grid gap-8 sm:grid-cols-3">
-            {PILLARS.map((p, i) => (
-              <div key={p.k} className={`reveal reveal-d${i + 1} border-l-2 border-red pl-5`}>
-                <h3 className="display display-sm !text-[1.5rem]">{p.k}</h3>
-                <p className="copy mt-2 text-steel-400">{p.v}</p>
+            {copy.about.pillars.map((_, i) => (
+              <div key={i} className={`reveal reveal-d${i + 1} border-l-2 border-red pl-5`}>
+                <h3 className="display display-sm !text-[1.5rem]" {...text(`about.pillars.${i}.name`)} />
+                <p className="copy mt-2 text-steel-400" {...text(`about.pillars.${i}.text`)} />
               </div>
             ))}
           </div>

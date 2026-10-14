@@ -1,0 +1,165 @@
+{
+  "nav": {
+    "cta": "Request a Quote"
+  },
+  "hero": {
+    "eyebrow": "Welding & Fabrication",
+    "eyebrowPlace": "— Port Huron, MI",
+    "headline": "Built to print.",
+    "headlineAccent": "Delivered on time.",
+    "lede": "Precision welding and fabrication for automation, energy, industrial and agricultural work. Send us a print or a CAD file and we’ll come back with a quote and a lead time.",
+    "ctaQuote": "Request a Quote",
+    "ctaWork": "See the Work",
+    "call": "or call",
+    "ticker": [
+      "Precision parts",
+      "Weldments",
+      "Frames",
+      "Prototypes",
+      "R&D builds",
+      "Production runs",
+      "Built to print",
+      "On time",
+      "Port Huron, MI"
+    ]
+  },
+  "capabilities": {
+    "eyebrow": "Capabilities",
+    "title": "What we",
+    "titleAccent": "build",
+    "lede": "Welding and fabrication done to the drawing. Every job starts with your print and ends with a part that matches it — on the date we quoted.",
+    "items": [
+      {
+        "name": "Welding",
+        "blurb": "Clean, consistent welds on structural and precision work — from a single piece to a production run."
+      },
+      {
+        "name": "Fabrication",
+        "blurb": "Frames, weldments, brackets and assemblies cut, formed and built to your print."
+      },
+      {
+        "name": "Prototypes & R&D",
+        "blurb": "One-offs and first articles turned around fast, with the fit and finish of a finished part."
+      },
+      {
+        "name": "Production Parts",
+        "blurb": "Repeatable precision parts, quoted with a real lead time and delivered when we said."
+      }
+    ]
+  },
+  "work": {
+    "eyebrow": "The Work",
+    "title": "Out of the",
+    "titleAccent": "shop",
+    "lede": "Frames, weldments and precision parts, photographed on the floor the day they were finished."
+  },
+  "about": {
+    "eyebrow": "About RedHawk Fab",
+    "quote": "Our mission is to create precise products that reflect the unique needs of our clients — maintaining an expectation of high quality while delivering timely results.",
+    "pillars": [
+      {
+        "name": "Precise",
+        "text": "Products that reflect the unique needs of the client — built to the print, checked against the print."
+      },
+      {
+        "name": "High quality",
+        "text": "An expectation of high quality on every piece, not just the ones somebody is going to look at closely."
+      },
+      {
+        "name": "Timely",
+        "text": "We go above and beyond to deliver on time. The lead time we quote is the lead time you get."
+      }
+    ]
+  },
+  "industries": {
+    "eyebrow": "Industries we serve",
+    "title": "Built for the people who",
+    "titleAccent": "build things",
+    "lede": "Automation integrators, energy and industrial plants, ag operations and engineering teams — the same shop, the same standard.",
+    "items": [
+      {
+        "name": "Automation",
+        "blurb": "Frames, guarding, mounts and fixtures for automated cells."
+      },
+      {
+        "name": "Energy",
+        "blurb": "Oil and gas hardware built to spec and delivered on schedule."
+      },
+      {
+        "name": "Industrial",
+        "blurb": "Plant and process work — weldments, brackets, structural repair."
+      },
+      {
+        "name": "Prototype",
+        "blurb": "First articles and one-offs for teams who need a part in hand."
+      },
+      {
+        "name": "Agriculture",
+        "blurb": "Implements, attachments and repairs that hold up in the field."
+      },
+      {
+        "name": "R&D",
+        "blurb": "Iterative builds for engineers still figuring out the final design."
+      }
+    ]
+  },
+  "process": {
+    "eyebrow": "How a quote works",
+    "title": "Print in.",
+    "titleAccent": "Part out.",
+    "lede": "No forms to download, no phone tag. Attach the drawing, tell us when you need it, and you'll hear back with a price and a date.",
+    "steps": [
+      {
+        "name": "Send the print",
+        "blurb": "Attach a PDF drawing or a CAD file — STEP, DWG, DXF, SolidWorks — right on this page."
+      },
+      {
+        "name": "Get a quote and a lead time",
+        "blurb": "We review the print and reply with a price and a delivery date, not a guess."
+      },
+      {
+        "name": "We build to print",
+        "blurb": "Welding and fabrication to the drawing, checked against the drawing."
+      },
+      {
+        "name": "Delivered on time",
+        "blurb": "The date we quoted is the date it ships. That is the whole reputation."
+      }
+    ],
+    "cta": "Send a print for a quote",
+    "files": "PDF, DWG, DXF, STEP, IGES, SolidWorks — up to 50 MB a file."
+  },
+  "areas": {
+    "eyebrow": "Areas we serve",
+    "title": "The Blue Water region",
+    "titleAccent": "and the Thumb",
+    "lede": "Based in Port Huron. We quote and deliver across St. Clair, Sanilac, Lapeer and northern Macomb counties — and ship anywhere a print comes from.",
+    "cta": "All service areas"
+  },
+  "quote": {
+    "eyebrow": "Request a quote",
+    "title": "Send the print.",
+    "titleAccent": "Get a date.",
+    "lede": "Attach a PDF drawing or a CAD file, tell us how many and when you need them, and we'll reply with a price and a lead time.",
+    "callLabel": "Call or text",
+    "emailLabel": "Email a print",
+    "shopLabel": "Shop",
+    "hoursLabel": "Hours"
+  },
+  "footer": {
+    "blurb": "Quality welding and fabrication in Port Huron, Michigan. Precision parts, built to print and delivered on time.",
+    "region": "Port Huron · St. Clair County · Michigan"
+  },
+  "serviceAreas": {
+    "eyebrow": "Service areas",
+    "titleAccent": "Port Huron",
+    "title": "and everywhere a print comes from.",
+    "lede": "We’re a Port Huron shop. Most of our work is for customers across the Blue Water region, the Thumb and northern Macomb County — close enough to drop off a part or walk a job together. Farther than that, we ship.",
+    "more": {
+      "eyebrow": "Not on the list?",
+      "title": "If you can send a print,",
+      "titleAccent": "we can quote it.",
+      "lede": "The towns above are where we drive most. Parts ship from Port Huron to anywhere; attach the drawing and tell us where it's going."
+    }
+  }
+}

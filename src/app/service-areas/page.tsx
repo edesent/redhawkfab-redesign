@@ -7,6 +7,7 @@ import { Quote } from "@/components/Quote";
 import { SectionHead } from "@/components/SectionHead";
 import { AREAS, COUNTIES } from "@/data/areas";
 import { SITE } from "@/data/site";
+import { text } from "@/content";
 
 export const metadata: Metadata = {
   title: `Service Areas — Welding & Fabrication across the Blue Water Region | ${SITE.name}`,
@@ -23,13 +24,11 @@ export default function ServiceAreasPage() {
           <Image src="/band-sparks.jpg" alt="" fill priority sizes="100vw" className="object-cover opacity-40" />
           <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/60 to-ink" aria-hidden="true" />
           <div className="wrap relative">
-            <p className="eyebrow rise rise-1">Service areas</p>
+            <p className="eyebrow rise rise-1" {...text("serviceAreas.eyebrow")} />
             <h1 className="display display-xl rise rise-2 mt-6 max-w-[12ch]">
-              <span className="chrome">Port Huron</span> and everywhere a print comes from.
+              <span className="chrome" {...text("serviceAreas.titleAccent")} /> <span {...text("serviceAreas.title")} />
             </h1>
-            <p className="lede rise rise-3 mt-8 max-w-[58ch]">
-              We&rsquo;re a Port Huron shop. Most of our work is for customers across the Blue Water region, the Thumb and northern Macomb County — close enough to drop off a part or walk a job together. Farther than that, we ship.
-            </p>
+            <p className="lede rise rise-3 mt-8 max-w-[58ch]" {...text("serviceAreas.lede")} />
           </div>
         </section>
 
@@ -57,7 +56,7 @@ export default function ServiceAreasPage() {
 
         <section className="bg-steel-900 py-24 md:py-32">
           <div className="wrap">
-            <SectionHead eyebrow="Not on the list?" title={<>If you can send a print, <span className="chrome">we can quote it.</span></>} lede="The towns above are where we drive most. Parts ship from Port Huron to anywhere; attach the drawing and tell us where it's going." />
+            <SectionHead edit="serviceAreas.more" />
           </div>
         </section>
         <Quote />

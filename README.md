@@ -109,6 +109,37 @@ See `.env.example`. Quote requests go to their published address,
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | optional Turnstile |
 | `NEXT_PUBLIC_SITE_URL` | canonical host (demo sub now; `https://redhawkfab.com` at go-live) |
 
+## Editing the text (edit.redhawkfab.com)
+
+**Every phrase on the page lives in `src/content/copy.json`.** Change wording there, not in a
+component. Components render it with `{...text("hero.lede")}` (`src/content/index.ts`), which
+also tags the element `data-edit="hero.lede"`; a tagged element holds that one phrase only.
+
+The owner edits it themselves at **<https://edit.redhawkfab.com>** (fallback
+<https://edit.redhawkfab.elijahdesent.com>). It is the same deployment, and an `edit.*` host loads `src/edit/Editor.tsx`:
+
+1. They enter their email, and a sign-in link arrives (Resend, 20 minutes). Only addresses in
+   `EDIT_EMAILS` get one. The session is a signed HttpOnly cookie on that host, good for 30 days,
+   so no database is involved.
+2. Every editable phrase gets a dashed outline. They click it, type, and press Enter.
+   Unpublished changes are kept in localStorage if the tab closes.
+3. **Publish** commits `copy.json` to `main` through the GitHub API (`src/edit/github.ts`), and
+   Vercel deploys it. The bar watches the commit's `Vercel` status and says when it's live.
+
+Each change carries the text it replaced. If that phrase changed on `main` since the page
+loaded (from ChatGPT or a push), nothing is saved, and the newer wording is shown in gold.
+Edit hosts send `X-Robots-Tag: noindex` (`next.config.ts`). Phone, email, hours, the gallery
+and the per-town area wording are not editable there; they stay in `src/data/`.
+
+| Env (Production) | |
+| --- | --- |
+| `EDIT_EMAILS` | who can sign in, comma separated |
+| `EDIT_SECRET` | signs links and sessions (32+ chars). Rotating it signs everyone out |
+| `EDIT_GITHUB_TOKEN` | contents:write on this repo. A fine-grained token scoped to this repo is best |
+| `EDIT_FROM_EMAIL` | optional; defaults to `QUOTE_FROM_EMAIL` |
+
+The DNS for `edit.redhawkfab.com` is a CNAME at GoDaddy pointing at Vercel. Hostnames are listed in `src/edit/hosts.ts`.
+
 ## Go-live checklist
 
 1. Client signs off. 2. Attach `redhawkfab.com` +
@@ -127,7 +158,8 @@ review. All worth adding the moment the client supplies them.
 
 | Path | Holds |
 | --- | --- |
-| `src/data/site.ts` | every business fact (phone, hours, address), the gallery order, the industry badges |
+| `src/content/copy.json` | every phrase on the page; the owner's text editor commits this file |
+| `src/data/site.ts` | every business fact (phone, hours, address) and the gallery order |
 | `src/data/areas.ts` | the 24 service-area towns |
 | `src/components/*` | one component per section (Nav, Hero, Capabilities, Work, Mission, Industries, Process, Areas, Quote, Footer) |
 | `src/app/api/quote/route.ts` | validation, anti-spam, Resend/Slack delivery |

@@ -27,11 +27,7 @@ export function Work() {
   return (
     <section id="work" className="bg-ink py-24 md:py-32">
       <div className="wrap">
-        <SectionHead
-          eyebrow="The Work"
-          title={<>Out of the <span className="chrome">shop</span></>}
-          lede="Frames, weldments and precision parts, photographed on the floor the day they were finished."
-        />
+        <SectionHead edit="work" />
 
         <div className="mt-14 grid gap-4 lg:grid-cols-3">
           <button type="button" onClick={() => setOpen(0)} className="reveal group relative aspect-[16/10] overflow-hidden lg:col-span-2 lg:aspect-auto lg:row-span-2" aria-label={`Open photo: ${feature.alt}`}>
