@@ -1,7 +1,8 @@
 # RedHawk Fab — website redesign
 
 A ground-up redesign for **RedHawk Fab**, a welding and fabrication shop in **Port Huron,
-Michigan** (their current site is a one-page GoDaddy template at <https://redhawkfab.com>).
+Michigan**. It replaced their one-page GoDaddy template and is **live at
+<https://www.redhawkfab.com>**.
 
 Next.js 16 (App Router, Turbopack) + Tailwind v4. 26 static pages: the home page, a
 service-area index and 24 town pages. Two API routes power the quote form.
@@ -12,24 +13,24 @@ npm run dev      # http://localhost:3000
 npm run build
 ```
 
-Live demo: <https://redhawkfab.elijahdesent.com>
+Owner text editor: <https://edit.redhawkfab.com> (see below).
 
 ---
 
-## This is a DEMO. It must not be indexed.
+## Live and indexable (since 2026-10-14)
 
-The site re-hosts RedHawk Fab's own photos and copy. If Google indexed it, it could outrank
-their real site. Two things block it and they move together:
+Production has `NEXT_PUBLIC_SITE_LIVE=true` and `NEXT_PUBLIC_SITE_URL=https://www.redhawkfab.com`
+(the apex 308s to `www`, so canonical, sitemap and schema use `www`). Both are inlined at build,
+so changing either needs a redeploy. Without the flag, a build is blocked from search:
 
 | Where | What |
 | --- | --- |
 | `src/app/robots.ts` | `Disallow: /` for every agent |
 | `src/app/layout.tsx` | `noindex, nofollow` on every page |
 
-Both read `NEXT_PUBLIC_SITE_LIVE`. It lives in `.env.production`, which is gitignored, so **a
-deploy with the variable unset stays blocked** (the safe default). **Flip with
-`./go-live.sh --live`** and also `vercel env add NEXT_PUBLIC_SITE_LIVE production` (value
-`true`). Do not flip until the client has signed off and `redhawkfab.com` points here.
+Preview deploys do not set the flag, so they stay blocked. The old demo host
+`redhawkfab.elijahdesent.com` and the `.vercel.app` URL redirect to `www.redhawkfab.com`.
+`./go-live.sh` only sets `.env.production` for local builds.
 
 ---
 
@@ -107,7 +108,7 @@ See `.env.example`. Quote requests go to their published address,
 | `BLOB_READ_WRITE_TOKEN` | file uploads (injected when a Blob store is connected to the project) |
 | `SLACK_WEBHOOK_URL` | optional second destination |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | optional Turnstile |
-| `NEXT_PUBLIC_SITE_URL` | canonical host (demo sub now; `https://redhawkfab.com` at go-live) |
+| `NEXT_PUBLIC_SITE_URL` | canonical host, `https://www.redhawkfab.com` |
 
 ## Editing the text (edit.redhawkfab.com)
 
@@ -139,13 +140,6 @@ and the per-town area wording are not editable there; they stay in `src/data/`.
 | `EDIT_FROM_EMAIL` | optional; defaults to `QUOTE_FROM_EMAIL` |
 
 The DNS for `edit.redhawkfab.com` is a CNAME at GoDaddy pointing at Vercel. Hostnames are listed in `src/edit/hosts.ts`.
-
-## Go-live checklist
-
-1. Client signs off. 2. Attach `redhawkfab.com` +
-`www` to the Vercel project and point DNS (they're on GoDaddy). 4. `NEXT_PUBLIC_SITE_URL`
-→ `https://redhawkfab.com`. 5. `./go-live.sh --live` + `vercel env add NEXT_PUBLIC_SITE_LIVE production`.
-6. Redirect or noindex the demo host so it isn't indexed instead of the real site.
 
 ## What we deliberately do NOT claim
 
