@@ -3,7 +3,7 @@
  * site; only these hostnames load the editor. edit.localhost resolves to your
  * own machine, for trying it with `npm run dev`.
  */
-export const EDIT_HOSTS = ["edit.redhawkfab.com", "edit.redhawkfab.elijahdesent.com", "edit.localhost"];
+export const EDIT_HOSTS = ["edit.redhawkfab.com", "edit.localhost"];
 
 /** Where published text shows up — named in the editor's "it's live" message. */
 export const PUBLIC_SITE = "redhawkfab.com";

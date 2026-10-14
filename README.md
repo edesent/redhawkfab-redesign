@@ -116,8 +116,7 @@ See `.env.example`. Quote requests go to their published address,
 component. Components render it with `{...text("hero.lede")}` (`src/content/index.ts`), which
 also tags the element `data-edit="hero.lede"`; a tagged element holds that one phrase only.
 
-The owner edits it themselves at **<https://edit.redhawkfab.com>** (fallback
-<https://edit.redhawkfab.elijahdesent.com>). It is the same deployment, and an `edit.*` host loads `src/edit/Editor.tsx`:
+The owner edits it themselves at **<https://edit.redhawkfab.com>**. It is the same deployment, and an `edit.*` host loads `src/edit/Editor.tsx`:
 
 1. They enter their email, and a sign-in link arrives (Resend, 20 minutes). Only addresses in
    `EDIT_EMAILS` get one. The session is a signed HttpOnly cookie on that host, good for 30 days,
