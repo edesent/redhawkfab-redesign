@@ -38,13 +38,21 @@ export function EditGate() {
     if (atEdit) writeFlag(true);
   }, [atEdit]);
 
+  // Exit reloads with ?fresh=… so nothing stale is reused; take it back off the address.
+  useEffect(() => {
+    const url = new URL(location.href);
+    if (!url.searchParams.has("fresh")) return;
+    url.searchParams.delete("fresh");
+    history.replaceState(history.state, "", url);
+  }, []);
+
   if (!atEdit && !flagged) return null;
   return (
     <Editor
       onClose={() => {
         writeFlag(false);
-        // A fresh load drops any unpublished text from the page (it's kept as a draft).
-        location.assign(atEdit ? "/" : location.pathname);
+        // A full, cache-busting load: no editor, no unpublished text, no in-app page cache.
+        location.assign(`${atEdit ? "/" : location.pathname}?fresh=${Date.now()}`);
       }}
     />
   );

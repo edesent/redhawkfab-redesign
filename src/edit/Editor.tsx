@@ -13,8 +13,10 @@ import { PUBLIC_SITE } from "./hosts";
 
 type Copy = Record<string, unknown>;
 type Note = { tone: "info" | "good" | "bad"; text: string };
-type Deploy = { commit: string; state: "pending" | "live" | "failed" };
+type Deploy = { commit: string; state: "pending" | "live" | "failed"; startedAt: number };
 type Draft = Record<string, { from: string; to: string }>;
+type Change = { key: string; from: string; to: string };
+type Confirm = { kind: "publish"; changes: Change[] } | { kind: "exit" };
 
 const DRAFT_KEY = "rh-edit-draft";
 const tidy = (s: string) => s.replace(/\s+/g, " ").trim();
@@ -22,6 +24,10 @@ const tagged = (key?: string) =>
   Array.from(document.querySelectorAll<HTMLElement>(key ? `[data-edit="${CSS.escape(key)}"]` : "[data-edit]"));
 const editableOf = (t: EventTarget | null) => (t instanceof Element ? t.closest<HTMLElement>("[data-edit]") : null);
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
+const clip = (s: string, n = 140) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+const clock = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+/** What we tell people a publish takes to reach the live site (Vercel build + deploy). */
+const LIVE_SECONDS = 120;
 
 function loadDraft(): Draft {
   try {
@@ -48,7 +54,22 @@ function editMode() {
   }
 }
 
-/** `onClose` leaves edit mode (EditGate reloads the page without the editor). */
+/** Centred over a dimmed page — sign-in, the publish warning, and exit. */
+function Dialog({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-[95] flex items-center justify-center overflow-y-auto bg-ink/80 p-4 backdrop-blur-sm">
+      <div role="dialog" aria-modal="true" aria-labelledby="edit-dialog-title" className="plate plate-cut rivets w-full max-w-[480px] p-7 sm:p-9">
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-red" aria-hidden="true" />
+        <h2 id="edit-dialog-title" className="display display-sm text-chrome">
+          {title}
+        </h2>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/** `onClose` leaves edit mode (EditGate reloads the page fresh, without the editor). */
 export function Editor({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState<string | null | undefined>(undefined);
   const [ready, setReady] = useState(false);
@@ -59,6 +80,8 @@ export function Editor({ onClose }: { onClose: () => void }) {
   const [deploy, setDeploy] = useState<Deploy | null>(null);
   const [addr, setAddr] = useState("");
   const [sent, setSent] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<Confirm | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   const base = useRef<Copy | null>(null);
   const pending = useRef(new Map<string, string>());
@@ -236,15 +259,30 @@ export function Editor({ onClose }: { onClose: () => void }) {
     };
   }, [editing, paint, remember]);
 
-  // The sign-in box sits over a dimmed page; keep the page behind it still.
+  // Dialogs sit over a dimmed page; keep the page behind them still.
+  const dialogOpen = email === null || confirm !== null;
   useEffect(() => {
-    if (email !== null) return;
+    if (!dialogOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [email]);
+  }, [dialogOpen]);
+
+  useEffect(() => {
+    if (!confirm) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setConfirm(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirm]);
+
+  // The countdown shown while a publish goes live.
+  useEffect(() => {
+    if (deploy?.state !== "pending") return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [deploy]);
 
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
@@ -254,7 +292,7 @@ export function Editor({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("beforeunload", warn);
   }, []);
 
-  // After a publish, watch for Vercel to finish the deploy (about a minute).
+  // After a publish, watch for Vercel to finish the deploy (about 2 minutes).
   useEffect(() => {
     if (deploy?.state !== "pending") return;
     let tries = 0;
@@ -263,7 +301,7 @@ export function Editor({ onClose }: { onClose: () => void }) {
       const j = (await fetch(`/api/edit/status?commit=${deploy.commit}`, { cache: "no-store" })
         .then((r) => r.json())
         .catch(() => null)) as { state?: Deploy["state"] } | null;
-      if (j?.state && j.state !== "pending") setDeploy({ commit: deploy.commit, state: j.state });
+      if (j?.state && j.state !== "pending") setDeploy({ ...deploy, state: j.state });
     }, 5000);
     return () => clearInterval(t);
   }, [deploy]);
@@ -288,13 +326,19 @@ export function Editor({ onClose }: { onClose: () => void }) {
     }
   }
 
-  async function publish() {
-    if (!pending.current.size || busy) return;
+  /** Publish asks first: what's changing, and that the live site needs about 2 minutes. */
+  function askPublish() {
     (document.activeElement as HTMLElement | null)?.blur();
+    const changes = [...pending.current].map(([key, to]) => ({ key, from: readPath(base.current, key) ?? "", to }));
+    if (changes.length) setConfirm({ kind: "publish", changes });
+  }
+
+  async function publish(changes: Change[]) {
+    if (!changes.length || busy) return;
+    setConfirm(null);
     setBusy(true);
     setDeploy(null);
     setNote({ tone: "info", text: "Publishing…" });
-    const changes = [...pending.current].map(([key, to]) => ({ key, from: readPath(base.current, key) ?? "", to }));
     try {
       const r = await fetch("/api/edit/copy", {
         method: "POST",
@@ -337,7 +381,8 @@ export function Editor({ onClose }: { onClose: () => void }) {
       remember();
       paint();
       if (j.commit) {
-        setDeploy({ commit: j.commit, state: "pending" });
+        setDeploy({ commit: j.commit, state: "pending", startedAt: Date.now() });
+        setNow(Date.now());
         setNote(null);
       } else {
         setNote({ tone: "good", text: "That’s already the text on the site." });
@@ -357,87 +402,85 @@ export function Editor({ onClose }: { onClose: () => void }) {
     setNote(null);
   }
 
-  async function signOut() {
-    await fetch("/api/edit/session", { method: "DELETE" }).catch(() => null);
-    setReady(false);
-    setEmail(null);
-    setNote(null);
+  /** Throw away unpublished text, forget the saved draft, and reload the live page fresh. */
+  async function exit(signOut: boolean) {
+    pending.current.clear();
+    conflicts.current.clear();
+    saveDraft({});
+    if (signOut) await fetch("/api/edit/session", { method: "DELETE" }).catch(() => null);
+    onClose();
   }
 
+  const left = deploy ? Math.max(0, LIVE_SECONDS - Math.floor((now - deploy.startedAt) / 1000)) : 0;
   const status: Note | null =
     note ??
     (deploy?.state === "pending"
-      ? { tone: "info", text: `Published. ${PUBLIC_SITE} updates in about a minute…` }
+      ? {
+          tone: "info",
+          text: left
+            ? `Published. ${PUBLIC_SITE} shows it in about ${clock(left)} — until then it still has the old wording.`
+            : `Still updating ${PUBLIC_SITE} — almost there.`,
+        }
       : deploy?.state === "live"
-        ? { tone: "good", text: `Your changes are live on ${PUBLIC_SITE}.` }
+        ? { tone: "good", text: `Live now on ${PUBLIC_SITE}.` }
         : deploy?.state === "failed"
           ? { tone: "bad", text: "Your text is saved, but the live site didn’t rebuild. Let Eli know." }
           : null);
 
   if (email === null) {
-    return (
-      <div className="fixed inset-0 z-[95] flex items-center justify-center overflow-y-auto bg-ink/80 p-4 backdrop-blur-sm">
-        <div role="dialog" aria-modal="true" aria-labelledby="edit-signin-title" className="plate plate-cut rivets w-full max-w-[440px] p-7 sm:p-9">
-          <div className="absolute inset-x-0 top-0 h-[3px] bg-red" aria-hidden="true" />
-          {sent ? (
-            <>
-              <h2 id="edit-signin-title" className="display display-sm text-chrome">
-                Check your email
-              </h2>
-              <p className="copy mt-4">
-                We sent a sign-in link to <span className="text-chrome">{sent}</span>. It works for 20 minutes.
-              </p>
-              <p className="copy mt-3 text-steel-400">
-                Not in your inbox after a minute? Look in Spam and mark it “Not spam” so the next one comes straight through.
-              </p>
-              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <button type="button" onClick={() => setSent(null)} className="text-[0.9375rem] text-steel-300 underline hover:text-white">
-                  Use a different email
-                </button>
-                <button type="button" onClick={onClose} className="text-[0.9375rem] text-steel-400 underline hover:text-white">
-                  Close
-                </button>
-              </div>
-            </>
-          ) : (
-            <form onSubmit={requestLink}>
-              <h2 id="edit-signin-title" className="display display-sm text-chrome">
-                Edit this website
-              </h2>
-              <p className="copy mt-3">Enter your email and we’ll send you a link to sign in.</p>
-              <label htmlFor="edit-email" className="label mt-7 block">
-                Email
-              </label>
-              <input
-                id="edit-email"
-                type="email"
-                required
-                autoFocus
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={addr}
-                onChange={(e) => setAddr(e.target.value)}
-                className="mt-2 min-h-[50px] w-full border border-steel-600 bg-ink px-4 text-[1.0625rem] text-chrome placeholder:text-steel-600 focus:border-red"
-              />
-              <button type="submit" disabled={busy} className="btn btn-red mt-4 w-full">
-                {busy ? "Sending…" : "Email me a sign-in link"}
-              </button>
-              <button type="button" onClick={onClose} className="mt-5 text-[0.875rem] text-steel-400 underline hover:text-white">
-                Close
-              </button>
-            </form>
-          )}
-          {note && (
-            <p aria-live="polite" className={`mt-5 text-[0.9375rem] ${note.tone === "bad" ? "text-[#f5b301]" : "text-steel-300"}`}>
-              {note.text}
-            </p>
-          )}
+    return sent ? (
+      <Dialog title="Check your email">
+        <p className="copy mt-4">
+          We sent a sign-in link to <span className="text-chrome">{sent}</span>. It works for 20 minutes.
+        </p>
+        <p className="copy mt-3 text-steel-400">
+          Not in your inbox after a minute? Look in Spam and mark it “Not spam” so the next one comes straight through.
+        </p>
+        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <button type="button" onClick={() => setSent(null)} className="text-[0.9375rem] text-steel-300 underline hover:text-white">
+            Use a different email
+          </button>
+          <button type="button" onClick={onClose} className="text-[0.9375rem] text-steel-400 underline hover:text-white">
+            Close
+          </button>
         </div>
-      </div>
+      </Dialog>
+    ) : (
+      <Dialog title="Edit this website">
+        <form onSubmit={requestLink}>
+          <p className="copy mt-3">Enter your email and we’ll send you a link to sign in.</p>
+          <label htmlFor="edit-email" className="label mt-7 block">
+            Email
+          </label>
+          <input
+            id="edit-email"
+            type="email"
+            required
+            autoFocus
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={addr}
+            onChange={(e) => setAddr(e.target.value)}
+            className="mt-2 min-h-[50px] w-full border border-steel-600 bg-ink px-4 text-[1.0625rem] text-chrome placeholder:text-steel-600 focus:border-red"
+          />
+          <button type="submit" disabled={busy} className="btn btn-red mt-4 w-full">
+            {busy ? "Sending…" : "Email me a sign-in link"}
+          </button>
+          <button type="button" onClick={onClose} className="mt-5 text-[0.875rem] text-steel-400 underline hover:text-white">
+            Close
+          </button>
+        </form>
+        {note && (
+          <p aria-live="polite" className={`mt-5 text-[0.9375rem] ${note.tone === "bad" ? "text-[#f5b301]" : "text-steel-300"}`}>
+            {note.text}
+          </p>
+        )}
+      </Dialog>
     );
   }
 
   return (
+    <>
     <div
       role="region"
       aria-label="Website text editor"
@@ -459,28 +502,22 @@ export function Editor({ onClose }: { onClose: () => void }) {
               </p>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <button type="button" onClick={() => setPreview((p) => !p)} className="btn btn-ghost !min-h-[44px] !px-4 !text-[0.875rem]">
+              <button type="button" onClick={() => setPreview((p) => !p)} className="btn btn-ghost !min-h-[44px] !px-3 !text-[0.875rem] sm:!px-4">
                 {preview ? "Back to editing" : "Preview"}
               </button>
-              {count > 0 ? (
+              {count > 0 && (
                 <>
-                  <button type="button" onClick={discard} disabled={busy} className="btn btn-ghost !min-h-[44px] !px-4 !text-[0.875rem]">
+                  <button type="button" onClick={discard} disabled={busy} className="btn btn-ghost !min-h-[44px] !px-3 !text-[0.875rem] sm:!px-4">
                     Discard
                   </button>
-                  <button type="button" onClick={publish} disabled={busy} className="btn btn-red !min-h-[44px] !px-5 !text-[0.9375rem]">
+                  <button type="button" onClick={askPublish} disabled={busy} className="btn btn-red !min-h-[44px] !px-4 !text-[0.9375rem] sm:!px-5">
                     {busy ? "Publishing…" : "Publish"}
                   </button>
                 </>
-              ) : (
-                <>
-                  <button type="button" onClick={signOut} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white" title={email}>
-                    Sign out
-                  </button>
-                  <button type="button" onClick={onClose} className="btn btn-ghost !min-h-[44px] !px-4 !text-[0.875rem]">
-                    Close
-                  </button>
-                </>
               )}
+              <button type="button" onClick={() => setConfirm({ kind: "exit" })} className="btn btn-ghost !min-h-[44px] !px-3 !text-[0.875rem] sm:!px-4">
+                Exit
+              </button>
             </div>
           </>
         )}
@@ -493,8 +530,8 @@ export function Editor({ onClose }: { onClose: () => void }) {
             {deploy?.state === "live" && !note && (
               <>
                 {" "}
-                <a href={`https://${PUBLIC_SITE}/`} target="_blank" rel="noopener" className="underline hover:text-white">
-                  Open it
+                <a href={`https://www.${PUBLIC_SITE}/?fresh=${deploy.commit.slice(0, 7)}`} target="_blank" rel="noopener" className="underline hover:text-white">
+                  See it
                 </a>
               </>
             )}
@@ -502,5 +539,62 @@ export function Editor({ onClose }: { onClose: () => void }) {
         )}
       </div>
     </div>
+
+    {confirm?.kind === "publish" && (
+      <Dialog title={`Publish ${plural(confirm.changes.length, "change")}?`}>
+        <ul className="mt-5 max-h-[38vh] space-y-4 overflow-y-auto pr-1">
+          {confirm.changes.map((c) => (
+            <li key={c.key} className="border-l-2 border-red pl-4 text-[0.9375rem] leading-snug">
+              <p className="text-steel-400 line-through decoration-steel-600">{clip(c.from)}</p>
+              <p className="mt-1 text-chrome">{clip(c.to)}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 border border-[#f5b301]/40 bg-[#f5b301]/10 p-4 text-[0.9375rem] leading-relaxed text-chrome">
+          <span className="font-semibold">Give it about 2 minutes.</span> The live site rebuilds after you publish. Until it finishes,
+          redhawkfab.com — for visitors and for you — still shows the old wording. This bar counts down and tells you when it’s live.
+        </p>
+        <div className="mt-7 flex flex-wrap items-center gap-3">
+          <button type="button" onClick={() => publish(confirm.changes)} disabled={busy} className="btn btn-red">
+            Publish
+          </button>
+          <button type="button" onClick={() => setConfirm(null)} className="btn btn-ghost">
+            Cancel
+          </button>
+        </div>
+      </Dialog>
+    )}
+
+    {confirm?.kind === "exit" && (
+      <Dialog title="Exit the editor?">
+        {count > 0 && (
+          <p className="copy mt-4 text-chrome">
+            You have {plural(count, "unpublished change")}. Exiting throws {count === 1 ? "it" : "them"} away.
+          </p>
+        )}
+        {deploy?.state === "pending" && (
+          <p className="copy mt-4 text-chrome">
+            Your last publish is still going live{left ? ` — about ${clock(left)} left` : ""}. If you exit now, the page may show the old wording until
+            then; refresh it after that.
+          </p>
+        )}
+        <p className="copy mt-4 text-steel-400">
+          Exiting clears the editor from this browser and reloads the page fresh, the way visitors see it. You stay signed in, so /edit brings you
+          straight back.
+        </p>
+        <div className="mt-7 flex flex-wrap items-center gap-3">
+          <button type="button" onClick={() => exit(false)} className="btn btn-red">
+            Exit and clear
+          </button>
+          <button type="button" onClick={() => setConfirm(null)} className="btn btn-ghost">
+            Keep editing
+          </button>
+        </div>
+        <button type="button" onClick={() => exit(true)} className="mt-5 text-[0.875rem] text-steel-400 underline hover:text-white">
+          Exit and sign out
+        </button>
+      </Dialog>
+    )}
+    </>
   );
 }
