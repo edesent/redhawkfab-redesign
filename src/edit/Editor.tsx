@@ -48,7 +48,8 @@ function editMode() {
   }
 }
 
-export function Editor() {
+/** `onClose` leaves edit mode (EditGate reloads the page without the editor). */
+export function Editor({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState<string | null | undefined>(undefined);
   const [ready, setReady] = useState(false);
   const [preview, setPreview] = useState(false);
@@ -382,6 +383,9 @@ export function Editor() {
               <button type="button" onClick={() => setSent(null)} className="text-steel-400 underline hover:text-white">
                 Use a different email
               </button>
+              <button type="button" onClick={onClose} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white">
+                Close
+              </button>
             </>
           ) : (
             <form onSubmit={requestLink} className="flex flex-1 flex-wrap items-center gap-3">
@@ -401,6 +405,9 @@ export function Editor() {
               />
               <button type="submit" disabled={busy} className="btn btn-red !min-h-[46px] !px-5 !text-[0.9375rem]">
                 {busy ? "Sending…" : "Email me a sign-in link"}
+              </button>
+              <button type="button" onClick={onClose} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white">
+                Close
               </button>
             </form>
           )
@@ -429,9 +436,14 @@ export function Editor() {
                   </button>
                 </>
               ) : (
-                <button type="button" onClick={signOut} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white" title={email}>
-                  Sign out
-                </button>
+                <>
+                  <button type="button" onClick={signOut} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white" title={email}>
+                    Sign out
+                  </button>
+                  <button type="button" onClick={onClose} className="btn btn-ghost !min-h-[44px] !px-4 !text-[0.875rem]">
+                    Close
+                  </button>
+                </>
               )}
             </div>
           </>

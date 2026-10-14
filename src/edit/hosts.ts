@@ -1,15 +1,14 @@
 /**
- * The site with the text editor switched on. Same deployment as the public
- * site; only these hostnames load the editor. edit.localhost resolves to your
- * own machine, for trying it with `npm run dev`.
+ * The text editor lives at /edit on the public site. Sign-in links are only
+ * sent from these hosts, and the session cookie stays on the host that set it.
  */
-export const EDIT_HOSTS = ["edit.redhawkfab.com", "edit.localhost"];
+export const SIGN_IN_HOSTS = ["www.redhawkfab.com", "localhost"];
 
 /** Where published text shows up — named in the editor's "it's live" message. */
 export const PUBLIC_SITE = "redhawkfab.com";
 
-export function isEditHost(host: string | null | undefined) {
-  return Boolean(host) && EDIT_HOSTS.includes(host!.toLowerCase().split(":")[0]);
+export function canSignInFrom(host: string | null | undefined) {
+  return Boolean(host) && SIGN_IN_HOSTS.includes(host!.toLowerCase().split(":")[0]);
 }
 
 /**

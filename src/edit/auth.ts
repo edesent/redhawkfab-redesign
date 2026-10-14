@@ -9,6 +9,8 @@ import { cookies } from "next/headers";
  */
 
 export const SESSION_COOKIE = "rh_edit";
+/** Only the editor's API reads the session, so the cookie never rides along on page requests. */
+export const SESSION_PATH = "/api/edit";
 export const LINK_MINUTES = 20;
 export const SESSION_DAYS = 30;
 

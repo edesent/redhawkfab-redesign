@@ -13,7 +13,7 @@ npm run dev      # http://localhost:3000
 npm run build
 ```
 
-Owner text editor: <https://edit.redhawkfab.com> (see below).
+Owner text editor: <https://www.redhawkfab.com/edit> (see below).
 
 ---
 
@@ -110,17 +110,21 @@ See `.env.example`. Quote requests go to their published address,
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | optional Turnstile |
 | `NEXT_PUBLIC_SITE_URL` | canonical host, `https://www.redhawkfab.com` |
 
-## Editing the text (edit.redhawkfab.com)
+## Editing the text (www.redhawkfab.com/edit)
 
 **Every phrase on the page lives in `src/content/copy.json`.** Change wording there, not in a
 component. Components render it with `{...text("hero.lede")}` (`src/content/index.ts`), which
 also tags the element `data-edit="hero.lede"`; a tagged element holds that one phrase only.
 
-The owner edits it themselves at **<https://edit.redhawkfab.com>**. It is the same deployment, and an `edit.*` host loads `src/edit/Editor.tsx`:
+The owner edits it themselves at **<https://www.redhawkfab.com/edit>**. `/edit` is the home page,
+and `src/edit/EditGate.tsx` loads `src/edit/Editor.tsx` there. Editing then stays on for the rest of
+that tab (sessionStorage), so other pages can be edited too, until they press Close. Visitors who
+never open `/edit` never download the editor:
 
 1. They enter their email, and a sign-in link arrives (Resend, 20 minutes). Only addresses in
-   `EDIT_EMAILS` get one. The session is a signed HttpOnly cookie on that host, good for 30 days,
-   so no database is involved.
+   `EDIT_EMAILS` get one, and only from `www.redhawkfab.com` (`src/edit/hosts.ts`). The session
+   is a signed HttpOnly cookie scoped to `/api/edit`, good for 30 days, so no database is
+   involved.
 2. Every editable phrase gets a dashed outline. They click it, type, and press Enter.
    Unpublished changes are kept in localStorage if the tab closes.
 3. **Publish** commits `copy.json` to `main` through the GitHub API (`src/edit/github.ts`), and
@@ -128,7 +132,7 @@ The owner edits it themselves at **<https://edit.redhawkfab.com>**. It is the sa
 
 Each change carries the text it replaced. If that phrase changed on `main` since the page
 loaded (from ChatGPT or a push), nothing is saved, and the newer wording is shown in gold.
-Edit hosts send `X-Robots-Tag: noindex` (`next.config.ts`). Phone, email, hours, the gallery
+`/edit` is noindex (page metadata plus an `X-Robots-Tag` header in `next.config.ts`). Phone, email, hours, the gallery
 and the per-town area wording are not editable there; they stay in `src/data/`.
 
 | Env (Production) | |
@@ -138,7 +142,8 @@ and the per-town area wording are not editable there; they stay in `src/data/`.
 | `EDIT_GITHUB_TOKEN` | contents:write on this repo. A fine-grained token scoped to this repo is best |
 | `EDIT_FROM_EMAIL` | optional; defaults to `QUOTE_FROM_EMAIL` |
 
-The DNS for `edit.redhawkfab.com` is a CNAME at GoDaddy pointing at Vercel. Hostnames are listed in `src/edit/hosts.ts`.
+`edit.redhawkfab.com` is attached to the Vercel project but has no DNS. If a CNAME is ever added,
+`next.config.ts` forwards it to `/edit`.
 
 ## What we deliberately do NOT claim
 

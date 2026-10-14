@@ -1,6 +1,6 @@
 import { SITE } from "@/data/site";
 import { LINK_MINUTES, canEdit, editorEmails, linkToken, sameOrigin } from "@/edit/auth";
-import { isEditHost, requestOrigin } from "@/edit/hosts";
+import { canSignInFrom, requestOrigin } from "@/edit/hosts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,10 +17,10 @@ function limited(key: string) {
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-/** Emails a sign-in link — only to an address in EDIT_EMAILS, only from an edit host. */
+/** Emails a sign-in link — only to an address in EDIT_EMAILS, only from the real site. */
 export async function POST(req: Request) {
   const host = req.headers.get("host");
-  if (!isEditHost(host) || !sameOrigin(req)) return Response.json({ error: "Not available here." }, { status: 404 });
+  if (!canSignInFrom(host) || !sameOrigin(req)) return Response.json({ error: "Not available here." }, { status: 404 });
 
   const body = (await req.json().catch(() => ({}))) as { email?: unknown };
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 200) : "";
