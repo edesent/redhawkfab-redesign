@@ -38,7 +38,10 @@ export async function POST(req: Request) {
   if (!canEdit(email)) return Response.json({ error: "That email isn’t set up to edit this site." }, { status: 403 });
 
   const key = process.env.RESEND_API_KEY;
-  const from = process.env.EDIT_FROM_EMAIL ?? process.env.QUOTE_FROM_EMAIL;
+  // Sent as a person on the sending domain: "RedHawk Fab" from an elijahdesent.com
+  // address, with a link to a third domain, read as phishing and went to Spam.
+  const sender = (process.env.QUOTE_FROM_EMAIL ?? "").match(/<([^>]+)>/)?.[1] ?? process.env.QUOTE_FROM_EMAIL;
+  const from = process.env.EDIT_FROM_EMAIL ?? (sender && `Eli Desent <${sender}>`);
   if (!key || !from) return Response.json({ error: "Sign-in email isn’t configured yet." }, { status: 503 });
 
   const link = `${requestOrigin(req)}/api/edit/verify?t=${linkToken(email)}`;
@@ -48,11 +51,15 @@ export async function POST(req: Request) {
     body: JSON.stringify({
       from,
       to: [email],
-      subject: `Your link to edit the ${SITE.name} website`,
-      text: `Open this link to edit the text on your website:\n\n${link}\n\nIt works for ${LINK_MINUTES} minutes. If you didn't ask for it, ignore this email.`,
-      html: `<p style="font:16px/1.5 system-ui,sans-serif">Open this link to edit the text on your website:</p>
-<p style="margin:24px 0"><a href="${esc(link)}" style="display:inline-block;background:#d8262c;color:#fff;padding:14px 22px;font:700 16px system-ui,sans-serif;text-decoration:none">Edit the ${esc(SITE.name)} website</a></p>
-<p style="font:14px/1.5 system-ui,sans-serif;color:#555">It works for ${LINK_MINUTES} minutes. If you didn't ask for it, ignore this email.</p>`,
+      subject: `Edit the ${SITE.name} website`,
+      text: `Hi,\n\nHere is your link to edit the text on the ${SITE.name} website. It opens the editor at www.redhawkfab.com/edit:\n\n${link}\n\nThe link works for ${LINK_MINUTES} minutes. It was requested from the editor just now; if that wasn't you, you can ignore this email.\n\nEli Desent\nelijahdesent.com`,
+      html: `<div style="font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;color:#222;max-width:520px">
+<p>Hi,</p>
+<p>Here is your link to edit the text on the ${esc(SITE.name)} website. It opens the editor at <b>www.redhawkfab.com/edit</b>.</p>
+<p style="margin:26px 0"><a href="${esc(link)}" style="display:inline-block;background:#d8262c;color:#fff;padding:14px 22px;font-weight:700;text-decoration:none">Open the editor</a></p>
+<p style="font-size:14px;color:#555">The link works for ${LINK_MINUTES} minutes. It was requested from the editor just now; if that wasn't you, you can ignore this email.</p>
+<p style="margin-top:28px">Eli Desent<br><span style="color:#777">elijahdesent.com</span></p>
+</div>`,
     }),
   }).catch(() => null);
 

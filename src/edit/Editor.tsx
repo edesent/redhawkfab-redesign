@@ -236,6 +236,16 @@ export function Editor({ onClose }: { onClose: () => void }) {
     };
   }, [editing, paint, remember]);
 
+  // The sign-in box sits over a dimmed page; keep the page behind it still.
+  useEffect(() => {
+    if (email !== null) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [email]);
+
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
       if (pending.current.size) e.preventDefault();
@@ -364,6 +374,69 @@ export function Editor({ onClose }: { onClose: () => void }) {
           ? { tone: "bad", text: "Your text is saved, but the live site didn’t rebuild. Let Eli know." }
           : null);
 
+  if (email === null) {
+    return (
+      <div className="fixed inset-0 z-[95] flex items-center justify-center overflow-y-auto bg-ink/80 p-4 backdrop-blur-sm">
+        <div role="dialog" aria-modal="true" aria-labelledby="edit-signin-title" className="plate plate-cut rivets w-full max-w-[440px] p-7 sm:p-9">
+          <div className="absolute inset-x-0 top-0 h-[3px] bg-red" aria-hidden="true" />
+          {sent ? (
+            <>
+              <h2 id="edit-signin-title" className="display display-sm text-chrome">
+                Check your email
+              </h2>
+              <p className="copy mt-4">
+                We sent a sign-in link to <span className="text-chrome">{sent}</span>. It works for 20 minutes.
+              </p>
+              <p className="copy mt-3 text-steel-400">
+                Not in your inbox after a minute? Look in Spam and mark it “Not spam” so the next one comes straight through.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <button type="button" onClick={() => setSent(null)} className="text-[0.9375rem] text-steel-300 underline hover:text-white">
+                  Use a different email
+                </button>
+                <button type="button" onClick={onClose} className="text-[0.9375rem] text-steel-400 underline hover:text-white">
+                  Close
+                </button>
+              </div>
+            </>
+          ) : (
+            <form onSubmit={requestLink}>
+              <h2 id="edit-signin-title" className="display display-sm text-chrome">
+                Edit this website
+              </h2>
+              <p className="copy mt-3">Enter your email and we’ll send you a link to sign in.</p>
+              <label htmlFor="edit-email" className="label mt-7 block">
+                Email
+              </label>
+              <input
+                id="edit-email"
+                type="email"
+                required
+                autoFocus
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={addr}
+                onChange={(e) => setAddr(e.target.value)}
+                className="mt-2 min-h-[50px] w-full border border-steel-600 bg-ink px-4 text-[1.0625rem] text-chrome placeholder:text-steel-600 focus:border-red"
+              />
+              <button type="submit" disabled={busy} className="btn btn-red mt-4 w-full">
+                {busy ? "Sending…" : "Email me a sign-in link"}
+              </button>
+              <button type="button" onClick={onClose} className="mt-5 text-[0.875rem] text-steel-400 underline hover:text-white">
+                Close
+              </button>
+            </form>
+          )}
+          {note && (
+            <p aria-live="polite" className={`mt-5 text-[0.9375rem] ${note.tone === "bad" ? "text-[#f5b301]" : "text-steel-300"}`}>
+              {note.text}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       role="region"
@@ -374,43 +447,6 @@ export function Editor({ onClose }: { onClose: () => void }) {
       <div className="wrap flex min-h-[72px] flex-wrap items-center gap-x-5 gap-y-3 py-3">
         {email === undefined || (email && !ready && !note) ? (
           <p>Loading the editor…</p>
-        ) : !email ? (
-          sent ? (
-            <>
-              <p className="flex-1">
-                <span className="font-semibold text-chrome">Check your email.</span> A sign-in link is on its way to {sent}. It works for 20 minutes.
-              </p>
-              <button type="button" onClick={() => setSent(null)} className="text-steel-400 underline hover:text-white">
-                Use a different email
-              </button>
-              <button type="button" onClick={onClose} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white">
-                Close
-              </button>
-            </>
-          ) : (
-            <form onSubmit={requestLink} className="flex flex-1 flex-wrap items-center gap-3">
-              <p className="label !text-[0.8125rem] text-chrome">Edit this website</p>
-              <label htmlFor="edit-email" className="sr-only">
-                Your email address
-              </label>
-              <input
-                id="edit-email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="Your email address"
-                value={addr}
-                onChange={(e) => setAddr(e.target.value)}
-                className="min-h-[46px] min-w-0 flex-1 basis-[220px] border border-steel-600 bg-ink px-4 text-chrome placeholder:text-steel-400 focus:border-red sm:max-w-[340px]"
-              />
-              <button type="submit" disabled={busy} className="btn btn-red !min-h-[46px] !px-5 !text-[0.9375rem]">
-                {busy ? "Sending…" : "Email me a sign-in link"}
-              </button>
-              <button type="button" onClick={onClose} className="px-1 text-[0.875rem] text-steel-400 underline hover:text-white">
-                Close
-              </button>
-            </form>
-          )
         ) : (
           <>
             <div className="min-w-0 flex-1 basis-[260px]">
